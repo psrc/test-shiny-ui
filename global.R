@@ -10,7 +10,7 @@ library(here)
 
 install_psrc_fonts()
 
-# !special case!
+## !special case!
 vars.subset <- fread('data/travel-vars.csv') # travel cat variables that have consistently named aliases for testing
 
 source('modules/functions.R')
