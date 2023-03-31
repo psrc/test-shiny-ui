@@ -28,7 +28,9 @@ navbarPage(
            column(width = 3,
                   trends_widgets_ui('trends')
            ),
-           column(width = 9)
+           column(width = 9,
+                  trends_plot_table_ui('trendsContent') # display DT
+                  )
   ), # end tabPanel
   
   tags$footer(footer_ui('myFooter'))

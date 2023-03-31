@@ -1,9 +1,9 @@
-# Display widgets for the trends tab
+# Display widgets for the trends tab. Display categories and render the appropriate variables for chosen category.
 # !categories can differ across surveys!
 
 trends_widgets_ui <- function(id) {
   ns <- NS(id)
-  cats <- c('Travel')
+  cats <- c('Travel') # test only with Travel category
   vars.cat <- vars.cat[which(vars.cat %in% cats)]
   
   tagList(
