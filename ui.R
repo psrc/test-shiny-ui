@@ -1,3 +1,4 @@
+shinyUI(
 navbarPage(
   id = "my_id",
   tags$style("@import url(https://use.fontawesome.com/releases/v6.3.0/css/all.css);"),
@@ -25,15 +26,17 @@ navbarPage(
   # tabs ----
   tabPanel(title="First Tab",
            banner_ui('trendsBanner'),
-           column(width = 3,
-                  trends_widgets_ui('trends')
-           ),
-           column(width = 9,
-                  trends_plot_table_ui('trendsContent') # display DT
-                  )
+           fluidRow(
+             column(width = 3,
+                    trends_widgets_ui('trends')
+             ),
+             column(width = 9,
+                    trends_plot_table_ui('trendsContent') # display DT
+             )
+           ) # end fluidRow
   ), # end tabPanel
   
   tags$footer(footer_ui('myFooter'))
   
 ) # end navbarpage
-
+) # end shinyUI

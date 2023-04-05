@@ -6,6 +6,7 @@ library(odbc)
 library(DBI)
 library(data.table)
 library(tidyverse)
+library(DT)
 library(here)
 
 install_psrc_fonts()

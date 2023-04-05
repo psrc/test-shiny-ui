@@ -4,7 +4,17 @@ trends_plot_table_ui <- function(id) {
   ns <- NS(id) # ns is namespace
   
   tagList( 
-    DT::dataTableOutput(ns('table'))
+    br(),
+    tabsetPanel(id = ns('tabset'),
+                type = 'pills',
+                tabPanel('Table',
+                         DT::dataTableOutput(ns('table'))
+                ),
+                tabPanel('Visual'
+                         
+                )
+                
+    ) # end tabsetPanel
   )
   
 }
@@ -45,9 +55,7 @@ trends_plot_table_server <- function(id, go, trend_var) {
       table_name <- table_names[[t]]
       dtypes <- as.vector(unique(v$dtype))
       
-      ifelse('fact' %in% dtypes,  type <- 'fact', type <- 'dimension') 
-      # weight_name <- select.vars$weight_name # weight_name doesn't exist in db!!!
-      # return(list(Weight_Name=weight_name, Type=type, Table_Name=table_name))
+      ifelse('fact' %in% dtypes,  type <- 'fact', type <- 'dimension')
       return(list(Type=type, Table_Name=table_name))
     } )
     
@@ -66,7 +74,7 @@ trends_plot_table_server <- function(id, go, trend_var) {
       ### iterate when checkbox is included in UI
       # if(input$stab_fltr_sea == T) data <- data[seattle_home == 'Home in Seattle',]
 
-      xa <- alias()
+      a <- alias()
 
       if (type == 'fact') {
         data <- map(data, ~.x[eval(parse(text = trend_var)) > min_float])
@@ -79,48 +87,82 @@ trends_plot_table_server <- function(id, go, trend_var) {
       new.colnames <- c("estimate", "estMOE", "share", "MOE", 'sample_count')
       old.colnames <- c('count', 'count_moe', 'share', 'share_moe', 'sample_size')
       walk(trendtab, ~setnames(.x, old = old.colnames, new = new.colnames))
-      # browser()
       new.colorder <- c("survey", trend_var, new.colnames)
       trendtab <- map(trendtab, ~.x[, ..new.colorder][share != 1, ])
       
+      # rbind all dataframes
+      trendtab <- rbindlist(trendtab)
+      
       xvals <- values()[, .(value_order, value_text)][]
 
-      # # check input type and xvals. sometimes xvals doesn't exist for some variables
-      # if((typeof(input$stab_xcol) == 'character') & (nrow(xvals) > 0)){
-      #   simpletab <- base::merge(simpletab, xvals, by.x=input$stab_xcol, by.y='value_text')
-      #   setorder(simpletab, value_order)
-      # }
-      # 
-      # dtypes <- dtype.choice.stab
-      # selcols <- c(xa, names(dtypes))
-      # 
-      # setnames(simpletab, c(input$stab_xcol, dtypes), selcols)
-      # setcolorder(simpletab, selcols)
-      # 
-      # dt <- simpletab[!(base::get(eval(xa)) %in% "")][, ..selcols]
+      # check input type and xvals. sometimes xvals doesn't exist for some variables
+      if((typeof(trend_var) == 'character') & (nrow(xvals) > 0)){
+        trendtab <- base::merge(trendtab, xvals, by.x = trend_var, by.y = 'value_text')
+        setorder(trendtab, value_order)
+      }
+
+      dtypes <- dtype.choice.stab
+      selcols <- c(a, names(dtypes))
+
+      setnames(trendtab, c('survey', trend_var, dtypes), c('Survey', selcols))
+      setcolorder(trendtab, c('Survey', a, selcols[which(selcols != a)]))
+
+      dt <- trendtab[!(base::get(eval(a)) %in% "")][, !('value_order')]
+    })
+    
+    
+    trendtable.DT <- reactive({
+      # clean Margin of Error columns and column/row reorder for DT
+      
+      xa <- alias()
+      dt <- copy(trendtable())
+
+      col <- names(dtype.choice[dtype.choice %in% "MOE"])
+      col2 <- names(dtype.choice[dtype.choice %in% "estMOE"])
+      
+      # round columns
+      dt[, (col) := lapply(.SD, function(x) round(x*100, 1)), .SDcols = col
+      ][, (col2) := lapply(.SD, function(x) prettyNum(round(x, 0), big.mark = ",", preserve.width = "none")), .SDcols = col2]
+      
+      # add symbols
+      dt[, (col) := lapply(.SD, function(x) paste0("+/-", as.character(x), "%")), .SDcols = col
+      ][, (col2) := lapply(.SD, function(x) paste0("+/-", as.character(x))), .SDcols = col2]
+      
+      # format survey year column, reorder rows
+      dt[, Survey := str_replace_all(Survey, "_", "/")]
+      dt <- dt[order(Survey)]
+
+      new.colorder <- c('Survey',
+                        xa,
+                        names(dtype.choice[dtype.choice %in% c("share")]),
+                        col,
+                        names(dtype.choice[dtype.choice %in% c("estimate")]),
+                        col2,
+                        names(dtype.choice[dtype.choice %in% c("sample_count")]))
+      
+      setcolorder(dt,  new.colorder)
+      return(dt)
     })
     
     output$table <- DT::renderDataTable({
-      trendtable()
-      # colors <- list(ltgrey = '#bdbdc3', dkgrey = '#343439')
-      # dt <- stabTable.DT()
-      # 
-      # fmt.per <- names(dtype.choice[dtype.choice %in% c('share')])
-      # fmt.num <- names(dtype.choice[dtype.choice %in% c('estimate', 'sample_count')])
-      # DT::datatable(dt,
-      #               options = list(bFilter=0, 
-      #                              # pageLength = 10,
-      #                              autoWidth = FALSE,
-      #                              columnDefs = list(list(className = "dt-center", width = '100px', targets = c(2:ncol(dt))))
-      #               )
-      # ) %>%
-      #   formatPercentage(fmt.per, 1) %>%
-      #   formatRound(fmt.num, 0) %>%
-      #   formatStyle(columns = 2:ncol(dt),
-      #               valueColumns = ncol(dt), 
-      #               color = styleInterval(c(30), c(colors$ltgrey, colors$dkgrey)))
+      # render DT with some additional column formatting
       
+      colors <- list(ltgrey = '#bdbdc3', dkgrey = '#343439')
       
+      dt <- trendtable.DT()
+
+      fmt.per <- names(dtype.choice[dtype.choice %in% c('share')])
+      fmt.num <- names(dtype.choice[dtype.choice %in% c('estimate', 'sample_count')])
+      DT::datatable(dt,
+                    options = list(autoWidth = FALSE,
+                                   columnDefs = list(list(className = "dt-center", width = '100px', targets = c(2:ncol(dt))))
+                    )
+      ) %>%
+        formatPercentage(fmt.per, 1) %>%
+        formatRound(fmt.num, 0) %>%
+        formatStyle(columns = 2:ncol(dt),
+                    valueColumns = ncol(dt),
+                    color = styleInterval(c(30), c(colors$ltgrey, colors$dkgrey)))
     })
     
     
