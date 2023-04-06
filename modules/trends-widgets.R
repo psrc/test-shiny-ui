@@ -13,7 +13,7 @@ trends_widgets_ui <- function(id) {
                 ),
     uiOutput(ns('var')),
     actionButton(ns('go'),
-                 label = 'Create Table')
+                 label = 'Enter')
   )
   
 }

@@ -50,26 +50,29 @@ i {
   padding-right: 10px;
 }
 
+
 .jumbotron.bg-success{
   background-color: #005753;
-  padding-top: 50px;
-  padding-bottom: 10px;
+  /*padding-top: 50px;
+  padding-bottom: 10px;*/
   border-radius: 0px;
 }
 
 .jumbotron.bg-info{
   background-color: #4A0048;
-  padding-top: 50px;
-  padding-bottom: 10px;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
   border-radius: 0px;
 }
 
+/*
 .card.bg-success{
   background-color: #005753;
   padding-top: 50px;
   padding-bottom: 10px;
   border-radius: 0px;
 }
+*/
 
 .source_url {
   color: #00716C;
@@ -98,7 +101,7 @@ i {
 .footer_title {
   color: #FFFFFF;
   font-family: "Poppins";
-  font-size: 16pt;
+  font-size: 14pt;
 }
 
 .footer_url {
@@ -110,7 +113,7 @@ i {
 .footer_mission {
   color: #FFFFFF;
   font-family: "Poppins";
-  font-size: 12pt;
+  font-size: 10pt;
 }
 
 .mainpage_subtitle {
@@ -158,7 +161,7 @@ i {
   font-size: 12pt;
   bottom: 0;
   width: 100%;
-  height: 50px; 
+  /*height: 50px; */
   background-color: #4A0048;
 
 }
@@ -196,6 +199,7 @@ head {
   text-decoration-thickness: 2px;
 }
 
+/*
 #sidebar {
     background-color: white;
     position: fixed;
@@ -204,6 +208,7 @@ head {
     top: 70px;
     bottom: 0px;
 }
+*/
 
 .chart_title {
   color: #999999;

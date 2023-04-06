@@ -4,13 +4,15 @@ trends_plot_table_ui <- function(id) {
   ns <- NS(id) # ns is namespace
   
   tagList( 
-    br(),
     tabsetPanel(id = ns('tabset'),
                 type = 'pills',
                 tabPanel('Table',
-                         DT::dataTableOutput(ns('table'))
+                         value = 't',
+                         div(DT::dataTableOutput(ns('table')), style = 'margin-top: 1rem')
+                         
                 ),
-                tabPanel('Visual'
+                tabPanel('Visual',
+                         value = 'v'
                          
                 )
                 
