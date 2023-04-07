@@ -3,6 +3,7 @@ server <- function(input, output, session) {
   
   # trends tab ----
   trends_tab_server('trendsTab')
+
     
   
 }

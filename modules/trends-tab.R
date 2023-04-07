@@ -14,6 +14,7 @@ trends_tab_ui <- function(id) {
           column(width = 3,
                  trends_widgets_ui(ns('trends')),
                  
+                 # if visual tab is clicked, display radio button selection (share, share moe, count, count moe, etc.)
                  conditionalPanel(paste0("input['", ns("tabset"), "'] == 'v'"),
                                   div(style = 'margin: 3rem 0',
                                       radioButtons(ns('radio'),
@@ -27,6 +28,7 @@ trends_tab_ui <- function(id) {
                              type = 'pills',
                              tabPanel('Table',
                                       value = 't',
+                                      div(DTOutput(ns('table')), style = 'margin-top: 1rem')
                                       
                                       
                              ),
@@ -51,6 +53,20 @@ trends_tab_server <- function(id) {
     ns <- session$ns
     
     trends_widgets_server('trends')
+
+    d <- eventReactive(input$`trends-go`, {
+      trends_data_server('trendsData', go = input$`trends-go`, trend_var = input$`trends-variable`)
+    })
+    
+    output$table <- renderDT({
+      if(input$`trends-go`) {
+        browser()
+        d <- d()
+      }
+        
+    })
+
+    
     
     
   }) # end moduleServer
