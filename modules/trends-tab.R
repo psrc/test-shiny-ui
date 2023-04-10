@@ -28,9 +28,7 @@ trends_tab_ui <- function(id) {
                              type = 'pills',
                              tabPanel('Table',
                                       value = 't',
-                                      div(DTOutput(ns('table')), style = 'margin-top: 1rem')
-                                      
-                                      
+                                      trends_table_ui(ns('table'))
                              ),
                              tabPanel('Visual',
                                       value = 'v'
@@ -58,10 +56,8 @@ trends_tab_server <- function(id) {
       trends_data_server('trendsData', go = input$`trends-go`, trend_var = input$`trends-variable`)
     })
     
-    output$table <- renderDT({
-      if(is.null(d())) return(NULL)
-      DT::datatable(d()$table)
-      
+    observeEvent(input$`trends-go`, {
+      trends_table_server('table', trendtable = d()$table, alias = d()$alias)
     })
 
     
