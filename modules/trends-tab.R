@@ -59,11 +59,9 @@ trends_tab_server <- function(id) {
     })
     
     output$table <- renderDT({
-      if(input$`trends-go`) {
-        browser()
-        d <- d()
-      }
-        
+      if(is.null(d())) return(NULL)
+      DT::datatable(d()$table)
+      
     })
 
     
@@ -72,21 +70,3 @@ trends_tab_server <- function(id) {
   }) # end moduleServer
   
 }
-
-
-
-## old ----
-# tabPanel(title = "Trends",
-#          banner_ui('trendsBanner'),
-#          div(style = 'margin: 3rem 0;',
-#              fluidRow(
-#                column(width = 3,
-#                       trends_widgets_ui('trends')
-#                      
-#                ),
-#                column(width = 9,
-#                       trends_plot_table_ui('trendsContent') # display DT
-#                )
-#              ) # end fluidRow
-#          ) # end div
-# ), # end tabPanel

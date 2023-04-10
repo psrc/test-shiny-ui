@@ -99,7 +99,10 @@ trends_data_server <- function(id, go, trend_var) {
       dt <- trendtab[!(base::get(eval(a)) %in% "")][, !('value_order')]
     })
     
-    return(reactive({list(table = trendtable(), tabletype = tabletype(), val = values(), alias = alias())}))
+
+    return(list(table = trendtable(), tabletype = tabletype(), val = values(), alias = alias()))
+
+   
     
   }) # end moduleServer
   
