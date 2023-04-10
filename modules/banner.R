@@ -4,7 +4,7 @@ banner_ui <- function(id, photo_filename, banner_title, banner_subtitle = NULL) 
   ns <- NS(id)
   
   tagList( 
-    fluidRow(column(4, style = 'padding-left:50px; padding-right:0px;',
+    fluidRow(column(4, style = 'padding-right:0px;',
                     div(
                       img(src = photo_filename, 
                           width = "100%", 
@@ -13,7 +13,7 @@ banner_ui <- function(id, photo_filename, banner_title, banner_subtitle = NULL) 
                           alt = "Street Intersection with housing building in the background")
                     )
     ),
-    column(8, style = 'padding-left:0px; padding-right:50px;',
+    column(8, style = 'padding-left:0px;',
            bs4Jumbotron(
              title = strong(div(class="mainpage_title", banner_title)),
              status = "success",

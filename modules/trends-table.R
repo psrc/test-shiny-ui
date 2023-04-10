@@ -13,10 +13,9 @@ trends_table_server <- function(id, trendtable, alias) {
  
   moduleServer(id, function(input, output, session) { 
     
-    trendtable.DT <- reactive({
+    clean_table <- reactive({
       # clean Margin of Error columns and column/row reorder for DT
       
-      xa <- alias
       dt <- trendtable
       
       col <- names(dtype.choice[dtype.choice %in% "MOE"])
@@ -35,7 +34,7 @@ trends_table_server <- function(id, trendtable, alias) {
       dt <- dt[order(Survey)]
       
       new.colorder <- c('Survey',
-                        xa,
+                        alias,
                         names(dtype.choice[dtype.choice %in% c("share")]),
                         col,
                         names(dtype.choice[dtype.choice %in% c("estimate")]),
@@ -51,10 +50,11 @@ trends_table_server <- function(id, trendtable, alias) {
       
       colors <- list(ltgrey = '#bdbdc3', dkgrey = '#343439')
       
-      dt <- trendtable.DT()
+      dt <- clean_table()
       
       fmt.per <- names(dtype.choice[dtype.choice %in% c('share')])
       fmt.num <- names(dtype.choice[dtype.choice %in% c('estimate', 'sample_count')])
+      
       DT::datatable(dt,
                     options = list(autoWidth = FALSE,
                                    columnDefs = list(list(className = "dt-center", width = '100px', targets = c(2:ncol(dt))))

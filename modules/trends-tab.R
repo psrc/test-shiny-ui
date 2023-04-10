@@ -9,7 +9,7 @@ trends_tab_ui <- function(id) {
               banner_title = "Travel Survey Trends", 
               banner_subtitle = "Something Something"),
     
-    div(style = 'margin: 3rem 0;',
+    div(style = 'margin: 3rem auto;',
         fluidRow(
           column(width = 3,
                  trends_widgets_ui(ns('trends')),
