@@ -31,7 +31,8 @@ trends_tab_ui <- function(id) {
                                       trends_table_ui(ns('table'))
                              ),
                              tabPanel('Visual',
-                                      value = 'v'
+                                      value = 'v',
+                                      trends_plot_ui(ns('plot'))
                                       
                              )
                              
@@ -58,6 +59,7 @@ trends_tab_server <- function(id) {
     
     observeEvent(input$`trends-go`, {
       trends_table_server('table', trendtable = d()$table, alias = d()$alias)
+      trends_plot_server('plot', trendtable= d()$table, alias = d()$alias)
     })
 
     

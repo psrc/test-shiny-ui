@@ -1,5 +1,6 @@
 library(shiny)
 library(psrcplot)
+library(plotly)
 library(bs4Dash)
 library(psrc.travelsurvey)
 library(odbc)
