@@ -52,16 +52,17 @@ trends_tab_server <- function(id) {
     ns <- session$ns
     
     trends_widgets_server('trends')
-
+    
     d <- eventReactive(input$`trends-go`, {
       trends_data_server('trendsData', go = input$`trends-go`, trend_var = input$`trends-variable`)
     })
     
     observeEvent(input$`trends-go`, {
-      trends_table_server('table', trendtable = d()$table, alias = d()$alias)
+      trends_table_server('table', go = input$`trends-go`, trendtable = d()$table, alias = d()$alias)
       trends_plot_server('plot', trendtable= d()$table, alias = d()$alias)
+      
     })
-
+    
     
     
     

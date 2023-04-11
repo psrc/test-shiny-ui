@@ -9,6 +9,7 @@ library(data.table)
 library(tidyverse)
 library(DT)
 library(here)
+library(shinycssloaders)
 
 install_psrc_fonts()
 

@@ -3,15 +3,29 @@
 trends_table_ui <- function(id) {
   ns <- NS(id)
   
-  tagList( 
-    div(DTOutput(ns('table')), style = 'margin-top: 1rem')
+  tagList(
+    uiOutput(ns('tableui'))
   )
   
 }
 
-trends_table_server <- function(id, trendtable, alias) {
+trends_table_server <- function(id, go, trendtable, alias) {
  
   moduleServer(id, function(input, output, session) { 
+    ns <- session$ns
+    
+    output$tableui <- renderUI({
+      go
+      
+      div(withSpinner(
+        DTOutput(ns('table')),
+        type = 5,
+        color = psrc_colors$pgnobgy_10[sample.int(10, 1)]
+        ),
+        style = 'margin-top: 1rem'
+      )
+
+    })
     
     clean_table <- reactive({
       # clean Margin of Error columns and column/row reorder for DT
@@ -47,7 +61,7 @@ trends_table_server <- function(id, trendtable, alias) {
     
     output$table <- renderDT({
       # render DT with some additional column formatting
-      
+   
       colors <- list(ltgrey = '#bdbdc3', dkgrey = '#343439')
       
       dt <- clean_table()
