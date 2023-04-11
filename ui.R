@@ -1,4 +1,3 @@
-
 navbarPage(
   id = "my_id",
   tags$style("@import url(https://use.fontawesome.com/releases/v6.3.0/css/all.css);"),
@@ -24,22 +23,13 @@ navbarPage(
   position = "fixed-top",
   
   # tabs ----
+ 
   tabPanel(title = "Trends",
-           banner_ui('trendsBanner'),
-           div(style = 'margin: 3rem 0;',
-               fluidRow(
-                 column(width = 3,
-                        trends_widgets_ui('trends')
-                       
-                 ),
-                 column(width = 9,
-                        trends_plot_table_ui('trendsContent') # display DT
-                 )
-               ) # end fluidRow
-           ) # end div
-  ), # end tabPanel
+           trends_tab_ui('trendsTab')
+           ),
   
-  tabPanel(title = "Something Else"),
+  tabPanel(title = "Something Else"
+           ),
   
   tags$footer(footer_ui('myFooter'))
   

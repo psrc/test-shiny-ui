@@ -37,7 +37,7 @@ trends_widgets_server <- function(id) {
                   choices = variables())
     })
     
-    
+
   }) # end moduleServer
   
 }

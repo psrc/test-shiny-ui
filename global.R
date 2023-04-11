@@ -1,5 +1,6 @@
 library(shiny)
 library(psrcplot)
+library(plotly)
 library(bs4Dash)
 library(psrc.travelsurvey)
 library(odbc)
@@ -8,6 +9,7 @@ library(data.table)
 library(tidyverse)
 library(DT)
 library(here)
+library(shinycssloaders)
 
 install_psrc_fonts()
 
