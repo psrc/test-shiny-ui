@@ -5,14 +5,29 @@ trends_plot_ui <- function(id) {
   
   tagList( 
     # render static psrcplot
-    div(plotlyOutput(ns('plot')), style = 'margin-top: 1rem')
+    uiOutput(ns('plotui'))
   )
   
 }
 
-trends_plot_server <- function(id, trendtable, alias) {
+trends_plot_server <- function(id, go, trendtable, alias) {
   
   moduleServer(id, function(input, output, session) { 
+    ns <- session$ns
+    
+    output$plotui <- renderUI({
+      go
+      
+      div(
+        withSpinner(
+          plotlyOutput(ns('plot')),
+          type = 5,
+          color = psrc_colors$pgnobgy_10[sample.int(10, 1)]
+          ),
+        style = 'margin-top: 1rem'
+        )
+      
+    })
     
     output$plot <- renderPlotly({
       interactive_column_chart(trendtable, 

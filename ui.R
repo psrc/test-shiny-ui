@@ -24,12 +24,9 @@ navbarPage(
   
   # tabs ----
  
-  tabPanel(title = "Trends",
-           trends_tab_ui('trendsTab')
-           ),
+  tabPanel(title = "Trends", trends_tab_ui('trendsTab')),
   
-  tabPanel(title = "Something Else"
-           ),
+  tabPanel(title = "Something Else", dummy_tab_ui('dummy')),
   
   tags$footer(footer_ui('myFooter'))
   

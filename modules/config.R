@@ -57,3 +57,13 @@ hist_breaks<- c(0,1,3,5,10,20,30,45,60,180)
 hist_breaks_labels<-c('0 to 1', '1 to 3', '3 to 5', '5 to 10', '10 to 20', '20 to 30', '30 to 45', '45 to 60', '60 to 180')
 hist_breaks_num_trips<-c(-.01,0,2,4,6,8,10,12,14,16,18,20,100)
 hist_breaks_num_trips_labels<-c('0', '1-2', '3-4', '5-6', '7-8', '9-10', '11-12', '13-14', '14-16', '17-18', '19-20', '20-100')
+
+# photo list
+psrc_photos <- c('bellevuetransitcenter.jpg',
+                 'canyon_road.png',
+                 'linkbeaconhillstn.jpg',
+                 'mtrainierparadisehikers.jpeg',
+                 'redmond-housing_0.jpg',
+                 'st_northgate_trim.png',
+                 'street-intersection.jpeg',
+                 'transitorienteddevelopment.jpeg')

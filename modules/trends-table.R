@@ -17,10 +17,11 @@ trends_table_server <- function(id, go, trendtable, alias) {
     output$tableui <- renderUI({
       go
       
-      div(withSpinner(
-        DTOutput(ns('table')),
-        type = 5,
-        color = psrc_colors$pgnobgy_10[sample.int(10, 1)]
+      div(
+        withSpinner(
+          DTOutput(ns('table')),
+          type = 5,
+          color = psrc_colors$pgnobgy_10[sample.int(10, 1)]
         ),
         style = 'margin-top: 1rem'
       )

@@ -5,11 +5,11 @@ trends_tab_ui <- function(id) {
   
   tagList(
     banner_ui('trendsBanner', 
-              photo_filename = "street-intersection.jpeg", 
+              photo_filename = psrc_photos[sample.int(length(psrc_photos), 1)], 
               banner_title = "Travel Survey Trends", 
               banner_subtitle = "Something Something"),
     
-    div(style = 'margin: 3rem auto;',
+    div(style = 'margin: 3rem 5rem;',
         fluidRow(
           column(width = 3,
                  trends_widgets_ui(ns('trends')),
@@ -18,8 +18,9 @@ trends_tab_ui <- function(id) {
                  conditionalPanel(paste0("input['", ns("tabset"), "'] == 'v'"),
                                   div(style = 'margin: 3rem 0',
                                       radioButtons(ns('radio'),
-                                                   label = 'Radio Buttons',
-                                                   choices = c('a', 'b', 'c')))
+                                                   label = 'Summary Types',
+                                                   choices = dtype.choice.stab.vis
+                                                   ))
                  )
                  
           ), # end column
@@ -59,7 +60,7 @@ trends_tab_server <- function(id) {
     
     observeEvent(input$`trends-go`, {
       trends_table_server('table', go = input$`trends-go`, trendtable = d()$table, alias = d()$alias)
-      trends_plot_server('plot', trendtable= d()$table, alias = d()$alias)
+      trends_plot_server('plot', go = input$`trends-go`, trendtable= d()$table, alias = d()$alias)
       
     })
     
