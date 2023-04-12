@@ -12,6 +12,9 @@ trends_widgets_ui <- function(id) {
                 choices = vars.cat, # list all categories available from variables table (regardless of survey)
                 ),
     uiOutput(ns('var')),
+    checkboxInput(ns('filter'),
+                  label = "Seattle households only",
+                  value = FALSE),
     actionButton(ns('go'),
                  label = 'Enter')
   )

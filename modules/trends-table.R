@@ -9,7 +9,7 @@ trends_table_ui <- function(id) {
   
 }
 
-trends_table_server <- function(id, go, trendtable, alias) {
+trends_table_server <- function(id, go, trendtable, alias, filter) {
  
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -60,6 +60,10 @@ trends_table_server <- function(id, go, trendtable, alias) {
       return(dt)
     })
     
+    description <- reactive({
+      ifelse(filter == T, g <- 'Seattle Results', g <- 'Regional Results')
+    })
+    
     output$table <- renderDT({
       # render DT with some additional column formatting
    
@@ -71,6 +75,7 @@ trends_table_server <- function(id, go, trendtable, alias) {
       fmt.num <- names(dtype.choice[dtype.choice %in% c('estimate', 'sample_count')])
       
       DT::datatable(dt,
+                    caption = description(),
                     options = list(autoWidth = FALSE,
                                    columnDefs = list(list(className = "dt-center", width = '100px', targets = c(2:ncol(dt))))
                     )

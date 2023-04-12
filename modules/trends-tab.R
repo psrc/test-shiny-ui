@@ -18,7 +18,7 @@ trends_tab_ui <- function(id) {
                  conditionalPanel(paste0("input['", ns("tabset"), "'] == 'v'"),
                                   div(style = 'margin: 3rem 0',
                                       radioButtons(ns('radio'),
-                                                   label = 'Summary Types',
+                                                   label = 'Visual Options',
                                                    choices = dtype.choice.stab.vis
                                                    ))
                  )
@@ -55,11 +55,11 @@ trends_tab_server <- function(id) {
     trends_widgets_server('trends')
     
     d <- eventReactive(input$`trends-go`, {
-      trends_data_server('trendsData', go = input$`trends-go`, trend_var = input$`trends-variable`)
+      trends_data_server('trendsData', go = input$`trends-go`, trend_var = input$`trends-variable`, filter = input$`trends-filter`)
     })
     
     observeEvent(input$`trends-go`, {
-      trends_table_server('table', go = input$`trends-go`, trendtable = d()$table, alias = d()$alias)
+      trends_table_server('table', go = input$`trends-go`, trendtable = d()$table, alias = d()$alias, filter = input$`trends-filter`)
       trends_plot_server('plot', go = input$`trends-go`, trendtable= d()$table, alias = d()$alias)
       
     })

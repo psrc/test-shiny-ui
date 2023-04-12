@@ -7,7 +7,7 @@ trends_data_ui <- function(id) {
   
 }
 
-trends_data_server <- function(id, go, trend_var) {
+trends_data_server <- function(id, go, trend_var, filter) {
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -59,10 +59,10 @@ trends_data_server <- function(id, go, trend_var) {
       survey_years <- varyears()
       data <- map(survey_years, ~get_hhts(survey = .x, level = table_name, vars = c("seattle_home", trend_var)))
       walk(data, ~setDT(.x))
-      
-      ### iterate when checkbox is included in UI
-      # if(input$stab_fltr_sea == T) data <- data[seattle_home == 'Home in Seattle',]
-      
+
+      # filter for Seattle only households when checkbox is checked
+      if(filter == T) data <- map(data, ~.x[seattle_home == 'Home in Seattle',])
+
       a <- alias()
       
       if (type == 'fact') {
