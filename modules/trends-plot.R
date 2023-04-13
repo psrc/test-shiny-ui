@@ -29,12 +29,13 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, visoption) 
       
     })
     
-    # issues with visoption when inside an intermediate reactive({})
+    clean_table <- reactive({
+      
+      trendtable()[, survey := str_replace_all(survey, '_', '/')]
+    })
     
     settings <- reactive({
-      d <- trendtable
-      d <- d[, survey := str_replace_all(survey, '_', '/')]
-      
+     
       primary_col <- switch(visoption(),
                             'share' = 'share',
                             'estimate' = 'estimate',
@@ -56,13 +57,12 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, visoption) 
                     "estimate_with_MOE" = 'number',
                     "sample_count" = 'number')
       
-      return(list(table = d, p = primary_col, m = moe_col, e = est))
+      return(list(p = primary_col, m = moe_col, e = est))
     })
     
     output$plot <- renderPlot({
-      
-      static_column_chart(t = settings()$table,
-                          x = trend_var,
+      static_column_chart(t = clean_table(),
+                          x = trend_var(),
                           y = settings()$p,
                           moe = settings()$m,
                           est = settings()$e,
