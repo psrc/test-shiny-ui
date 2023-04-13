@@ -7,7 +7,7 @@ trends_tab_ui <- function(id) {
     banner_ui('trendsBanner', 
               photo_filename = psrc_photos[sample.int(length(psrc_photos), 1)], 
               banner_title = "Travel Survey Trends", 
-              banner_subtitle = "Something Something"),
+              banner_subtitle = "Compare survey results across time"),
     
     div(style = 'margin: 3rem 5rem;',
         fluidRow(
@@ -17,10 +17,11 @@ trends_tab_ui <- function(id) {
                  # if visual tab is clicked, display radio button selection (share, share moe, count, count moe, etc.)
                  conditionalPanel(paste0("input['", ns("tabset"), "'] == 'v'"),
                                   div(style = 'margin: 3rem 0',
-                                      radioButtons(ns('radio'),
+                                      radioButtons(ns('visopt'),
                                                    label = 'Visual Options',
-                                                   choices = dtype.choice.stab.vis
-                                                   ))
+                                                   choices = dtype.choice.stab.vis,
+                                                   selected = dtype.choice.stab.vis[2]
+                                      ))
                  )
                  
           ), # end column
@@ -59,12 +60,21 @@ trends_tab_server <- function(id) {
     })
     
     observeEvent(input$`trends-go`, {
-      trends_table_server('table', go = input$`trends-go`, trendtable = d()$table, alias = d()$alias, filter = input$`trends-filter`)
-      trends_plot_server('plot', go = input$`trends-go`, trendtable= d()$table, alias = d()$alias)
-      
+      trends_table_server('table', 
+                          go = input$`trends-go`, 
+                          trendtable = d()$table, 
+                          alias = d()$alias, 
+                          filter = input$`trends-filter`)
     })
     
-    
+    # plot errors out when changing variable b/c no observeEvent
+    trends_plot_server('plot',
+                       # go = input$`trends-go`,
+                       trendtable= d()$tablevis,
+                       trend_var = input$`trends-variable`,
+                       alias = d()$alias,
+                       visoption = reactive({input$visopt})
+    )
     
     
   }) # end moduleServer

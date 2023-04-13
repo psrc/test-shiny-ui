@@ -72,7 +72,6 @@ trends_data_server <- function(id, go, trend_var, filter) {
       }
       
       trendtab <- map(data, ~hhts_count(.x, group_vars = trend_var, incl_na = FALSE))
-      
       new.colnames <- c("estimate", "estMOE", "share", "MOE", 'sample_count')
       old.colnames <- c('count', 'count_moe', 'share', 'share_moe', 'sample_size')
       walk(trendtab, ~setnames(.x, old = old.colnames, new = new.colnames))
@@ -89,21 +88,25 @@ trends_data_server <- function(id, go, trend_var, filter) {
         trendtab <- base::merge(trendtab, xvals, by.x = trend_var, by.y = 'value_text')
         setorder(trendtab, value_order)
       }
+    })
+    
+    trendtable_dt <- eventReactive(go, {
+      # create a version with prepped column headers for DT
+      
+      t <- copy(trendtable())
+      a <- alias()
       
       dtypes <- dtype.choice.stab
       selcols <- c(a, names(dtypes))
       
-      setnames(trendtab, c('survey', trend_var, dtypes), c('Survey', selcols))
-      setcolorder(trendtab, c('Survey', a, selcols[which(selcols != a)]))
-
-      dt <- trendtab[!(base::get(eval(a)) %in% "")][, !('value_order')]
+      setnames(t, c('survey', trend_var, dtypes), c('Survey', selcols))
+      setcolorder(t, c('Survey', a, selcols[which(selcols != a)]))
+      
+      dt <- t[!(base::get(eval(a)) %in% "")][, !('value_order')]
     })
-    
+      
+    return(list(table = trendtable_dt(), tablevis = trendtable(), tabletype = tabletype(), val = values(), alias = alias()))
 
-    return(list(table = trendtable(), tabletype = tabletype(), val = values(), alias = alias()))
-
-   
-    
   }) # end moduleServer
   
 }

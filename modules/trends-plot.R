@@ -10,31 +10,63 @@ trends_plot_ui <- function(id) {
   
 }
 
-trends_plot_server <- function(id, go, trendtable, alias) {
+trends_plot_server <- function(id, go, trendtable, trend_var, alias, visoption) {
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
     
     output$plotui <- renderUI({
-      go
+      # go
       
       div(
         withSpinner(
-          plotlyOutput(ns('plot')),
+          plotOutput(ns('plot')),
           type = 5,
           color = psrc_colors$pgnobgy_10[sample.int(10, 1)]
-          ),
+        ),
         style = 'margin-top: 1rem'
-        )
+      )
       
     })
     
-    output$plot <- renderPlotly({
-      interactive_column_chart(trendtable, 
-                          x = alias, 
-                          y = 'Total', 
-                          fill = 'Survey',
-                          title = paste('Estimate by', alias))
+    # issues with visoption when inside an intermediate reactive({})
+    
+    settings <- reactive({
+      d <- trendtable
+      d <- d[, survey := str_replace_all(survey, '_', '/')]
+      
+      primary_col <- switch(visoption(),
+                            'share' = 'share',
+                            'estimate' = 'estimate',
+                            "share_with_MOE" = 'share',
+                            "estimate_with_MOE" = 'estimate',
+                            "sample_count" = 'sample_count')
+
+      moe_col <- switch(visoption(),
+                        'share' = NULL,
+                        'estimate' = NULL,
+                        "share_with_MOE" = 'MOE',
+                        "estimate_with_MOE" = 'estMOE',
+                        "sample_count" = NULL)
+
+      est <- switch(visoption(),
+                    'share' = 'percent',
+                    'estimate' = 'number',
+                    "share_with_MOE" = 'percent',
+                    "estimate_with_MOE" = 'number',
+                    "sample_count" = 'number')
+      
+      return(list(table = d, p = primary_col, m = moe_col, e = est))
+    })
+    
+    output$plot <- renderPlot({
+      
+      static_column_chart(t = settings()$table,
+                          x = trend_var,
+                          y = settings()$p,
+                          moe = settings()$m,
+                          est = settings()$e,
+                          fill = 'survey')
     })
     
     
