@@ -10,7 +10,7 @@ trends_plot_ui <- function(id) {
   
 }
 
-trends_plot_server <- function(id, go, trendtable, trend_var, alias, visoption) {
+trends_plot_server <- function(id, go, trendtable, trend_var, alias, filter, visoption) {
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -60,13 +60,31 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, visoption) 
       return(list(p = primary_col, m = moe_col, e = est))
     })
     
+    text <- reactive({
+      desc <- switch(visoption(),
+                     'share' = 'Share',
+                     'estimate' = 'Estimate',
+                     "share_with_MOE" = 'Share',
+                     "estimate_with_MOE" = 'Estimate',
+                     "sample_count" = 'Sample count')
+      
+      title <- paste(desc, 'of', alias())
+      g <- ifelse(isolate(filter()) == T, 'Seattle', 'Regional')
+      subtitle <- paste(g, 'results')
+      
+      return(list(title = title, subtitle = subtitle))
+    })
+    
     output$plot <- renderPlot({
       static_column_chart(t = clean_table(),
                           x = isolate(trend_var()),
                           y = settings()$p,
                           moe = settings()$m,
                           est = settings()$e,
-                          fill = 'survey')
+                          fill = 'survey',
+                          title = text()$title,
+                          subtitle = text()$subtitle,
+                          source = 'Puget Sound Regional Household Travel Survey')
     })
     
     

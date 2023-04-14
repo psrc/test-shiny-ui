@@ -71,8 +71,8 @@ trends_tab_server <- function(id) {
                        go = input$`trends-go`,
                        trendtable= reactive(d()$tablevis),
                        trend_var = reactive(input$`trends-variable`),
-                       # trend_var = vals$var,
                        alias = reactive(d()$alias),
+                       filter = reactive(input$`trends-filter`),
                        visoption = reactive({input$visopt}))
     
     
