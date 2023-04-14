@@ -80,8 +80,10 @@ trends_tab_server <- function(id) {
                        trend_var = reactive(input$`trends-variable`),
                        # trend_var = vals$var,
                        alias = reactive(d()$alias),
-                       visoption = reactive({input$visopt})
-    )
+                       visoption = reactive({input$visopt}))
+    
+    
+    
     
     
   }) # end moduleServer

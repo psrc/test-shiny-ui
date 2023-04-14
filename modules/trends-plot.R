@@ -62,7 +62,7 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, visoption) 
     
     output$plot <- renderPlot({
       static_column_chart(t = clean_table(),
-                          x = trend_var(),
+                          x = isolate(trend_var()),
                           y = settings()$p,
                           moe = settings()$m,
                           est = settings()$e,
