@@ -19,8 +19,7 @@ trends_tab_ui <- function(id) {
                                   div(style = 'margin: 3rem 0',
                                       radioButtons(ns('visopt'),
                                                    label = 'Visual Options',
-                                                   choices = dtype.choice.stab.vis,
-                                                   selected = dtype.choice.stab.vis[2]
+                                                   choices = dtype.choice.stab.vis
                                       ))
                  )
                  

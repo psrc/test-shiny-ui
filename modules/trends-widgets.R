@@ -37,7 +37,8 @@ trends_widgets_server <- function(id) {
     output$var <- renderUI({
       selectInput(ns('variable'),
                   label = 'Variable', 
-                  choices = variables())
+                  choices = variables(),
+                  selected = variables()[2])
     })
     
 
