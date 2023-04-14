@@ -67,13 +67,6 @@ trends_tab_server <- function(id) {
                           filter = input$`trends-filter`)
     })
     
-    # # plot errors out when changing variable b/c no observeEvent
-    # vals <- reactiveValues(var = NULL)
-    # 
-    # observeEvent(input$`trends-go`, {
-    #   vals$var <- input$`trends-variable`
-    # })
-    
     trends_plot_server('plot',
                        go = input$`trends-go`,
                        trendtable= reactive(d()$tablevis),

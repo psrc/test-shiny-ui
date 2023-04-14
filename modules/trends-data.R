@@ -82,12 +82,15 @@ trends_data_server <- function(id, go, trend_var, filter) {
       trendtab <- rbindlist(trendtab)
       
       xvals <- values()[, .(value_order, value_text)][]
-      
+
       # check input type and xvals. sometimes xvals doesn't exist for some variables
       if((typeof(trend_var) == 'character') & (nrow(xvals) > 0)){
+       
         trendtab <- base::merge(trendtab, xvals, by.x = trend_var, by.y = 'value_text')
         setorder(trendtab, value_order)
       }
+      
+      return(trendtab)
     })
     
     trendtable_dt <- eventReactive(go, {
@@ -98,7 +101,7 @@ trends_data_server <- function(id, go, trend_var, filter) {
       
       dtypes <- dtype.choice.stab
       selcols <- c(a, names(dtypes))
-      
+
       setnames(t, c('survey', trend_var, dtypes), c('Survey', selcols))
       setcolorder(t, c('Survey', a, selcols[which(selcols != a)]))
       
