@@ -53,8 +53,6 @@ i {
 
 .jumbotron.bg-success{
   background-color: #005753;
-  /*padding-top: 50px;
-  padding-bottom: 10px;*/
   border-radius: 0px;
 }
 
@@ -122,6 +120,7 @@ i {
   font-size: 12pt;
 }
 
+/*
 .sidebar_headings {
   font-weight: 16pt;
   font-size: 14pt;
@@ -143,6 +142,7 @@ i {
   font-size: 12pt;
   color: #8CC63E;
 }
+*/
 
 .datatables {
   font-size: 10pt; 

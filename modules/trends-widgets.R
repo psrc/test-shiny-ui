@@ -10,8 +10,9 @@ trends_widgets_ui <- function(id) {
     selectInput(ns('category'),
                 label = 'Category',
                 choices = vars.cat, # list all categories available from variables table (regardless of survey)
-                ),
-    uiOutput(ns('var')),
+    ),
+    uiOutput(ns('var')), 
+    uiOutput(ns('icon')),
     checkboxInput(ns('filter'),
                   label = "Seattle households only",
                   value = FALSE),
@@ -28,20 +29,34 @@ trends_widgets_server <- function(id) {
     
     variables <- reactive({
       # variable and alias list
-      
+      # vars.subset is read in global.R
       t <- variables.lu[category %in% input$category, ][variable %in% vars.subset$variable]
       v.raw <- as.list(unique(t$variable))
       v.list <- setNames(v.raw, as.list(unique(t$variable_name)))
     })
     
     output$var <- renderUI({
+     div(style = "width: 90%; float:left;",
       selectInput(ns('variable'),
-                  label = 'Variable', 
+                  label = 'Variable',
                   choices = variables(),
                   selected = variables()[2])
+     )
     })
     
-
+    output$icon <- renderUI({
+      
+      tooltip(icon('circle-info', style="padding: 0px; font-size: 15px"),
+              title = variable_desc())
+      
+    })
+    
+    variable_desc <- eventReactive(input$variable, {
+      if(is.null(input$variable)) return(NULL)
+      unique(variables.lu[variable == input$variable, .(detail)])
+    })
+    
+    
   }) # end moduleServer
   
 }

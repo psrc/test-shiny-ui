@@ -8,13 +8,11 @@ banner_ui <- function(id, photo_filename, banner_title, banner_subtitle = NULL) 
                     div(
                       img(src = photo_filename, 
                           width = "100%", 
-                          height = "100%", 
-                          style = "padding-top: 0px; border-radius:0 0 30px 0;", 
-                          alt = "Street Intersection with housing building in the background")
+                          style = "padding-top: 0px; border-radius:0 0 30px 0;")
                     )
     ),
     column(8, style = 'padding-left:0px;',
-           bs4Jumbotron(
+           jumbotron(
              title = strong(div(class="mainpage_title", banner_title)),
              status = "success",
              btnName = strong(div(class="mainpage_subtitle", banner_subtitle))

@@ -18,7 +18,7 @@ navbarPage(
                            .navbar {min-height:25px !important;}'))
   ),
   
-  windowTitle = "My UI test", 
+  windowTitle = "PSRC Travel Survey Explorer", 
   theme = "styles.css",
   position = "fixed-top",
   
