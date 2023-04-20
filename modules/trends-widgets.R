@@ -13,9 +13,9 @@ trends_widgets_ui <- function(id) {
     ),
     uiOutput(ns('var')), 
     uiOutput(ns('icon')),
-    checkboxInput(ns('filter'),
-                  label = "Seattle households only",
-                  value = FALSE),
+    selectInput(ns('geography'),
+                label = 'Geography',
+                choices = c('Region', 'King', 'Kitsap', 'Pierce', 'Snohomish')),
     actionButton(ns('go'),
                  label = 'Enter')
   )

@@ -52,10 +52,20 @@ trends_tab_server <- function(id) {
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
     
+    vals <- reactiveValues(var = NULL)
+    
+    observeEvent(input$`trends-go`, {
+      vals$var <- input$`trends-variable`
+    })
+    
     trends_widgets_server('trends')
     
     d <- eventReactive(input$`trends-go`, {
-      trends_data_server('trendsData', go = input$`trends-go`, trend_var = input$`trends-variable`, filter = input$`trends-filter`)
+      trends_data_server('trendsData', 
+                         go = input$`trends-go`, 
+                         trend_var = input$`trends-variable`,
+                         geography = input$`trends-geography`
+                         )
     })
     
     observeEvent(input$`trends-go`, {
@@ -63,7 +73,8 @@ trends_tab_server <- function(id) {
                           go = input$`trends-go`, 
                           trendtable = d()$table, 
                           alias = d()$alias, 
-                          filter = input$`trends-filter`)
+                          geography = input$`trends-geography`
+                          )
     })
     
     trends_plot_server('plot',
@@ -71,12 +82,9 @@ trends_tab_server <- function(id) {
                        trendtable= reactive(d()$tablevis),
                        trend_var = reactive(input$`trends-variable`),
                        alias = reactive(d()$alias),
-                       filter = reactive(input$`trends-filter`),
-                       visoption = reactive({input$visopt}))
-    
-    
-    
-    
+                       geography = reactive(input$`trends-geography`),
+                       visoption = reactive(input$visopt),
+                       valsvar = reactive(vals$var))
     
   }) # end moduleServer
   

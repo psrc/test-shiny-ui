@@ -10,13 +10,12 @@ trends_plot_ui <- function(id) {
   
 }
 
-trends_plot_server <- function(id, go, trendtable, trend_var, alias, filter, visoption) {
+trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, visoption, valsvar) {
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
     
     output$plotui <- renderUI({
-      # go
       
       div(
         withSpinner(
@@ -26,7 +25,6 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, filter, vis
         ),
         style = 'margin-top: 1rem'
       )
-      
     })
     
     clean_table <- reactive({
@@ -69,15 +67,17 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, filter, vis
                      "sample_count" = 'Sample count')
       
       title <- paste(desc, 'of', alias())
-      g <- ifelse(isolate(filter()) == T, 'Seattle', 'Regional')
+      g <- ifelse(isolate(geography()) != 'Region', paste(isolate(geography()), 'County'), 'Regional')
+
       subtitle <- paste(g, 'results')
       
       return(list(title = title, subtitle = subtitle))
     })
     
     output$plot <- renderPlot({
+
       static_column_chart(t = clean_table(),
-                          x = isolate(trend_var()),
+                          x = valsvar(),
                           y = settings()$p,
                           moe = settings()$m,
                           est = settings()$e,

@@ -9,7 +9,7 @@ trends_table_ui <- function(id) {
   
 }
 
-trends_table_server <- function(id, go, trendtable, alias, filter) {
+trends_table_server <- function(id, go, trendtable, alias, geography) {
  
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -61,7 +61,7 @@ trends_table_server <- function(id, go, trendtable, alias, filter) {
     })
     
     description <- reactive({
-      ifelse(filter == T, g <- 'Seattle Results', g <- 'Regional Results')
+      ifelse(geography != 'Region', g <- paste(geography, 'County Results'), g <- 'Regional Results')
     })
     
     output$table <- renderDT({
