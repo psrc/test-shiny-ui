@@ -7,7 +7,7 @@ trends_data_ui <- function(id) {
   
 }
 
-trends_data_server <- function(id, go, trend_var, filter) {
+trends_data_server <- function(id, go, trend_var, geography) {
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -57,12 +57,12 @@ trends_data_server <- function(id, go, trend_var, filter) {
       
       # collect data for available years
       survey_years <- varyears()
-      data <- map(survey_years, ~get_hhts(survey = .x, level = table_name, vars = c("seattle_home", trend_var)))
+      data <- map(survey_years, ~get_hhts(survey = .x, level = table_name, vars = c("sample_county", "seattle_home", trend_var)))
       walk(data, ~setDT(.x))
-
-      # filter for Seattle only households when checkbox is checked
-      if(filter == T) data <- map(data, ~.x[seattle_home == 'Home in Seattle',])
-
+      
+      # filter for home county when county is selected
+      if(geography != 'Region') data <- map(data, ~.x[sample_county == geography,])
+        
       a <- alias()
       
       if (type == 'fact') {
@@ -89,7 +89,7 @@ trends_data_server <- function(id, go, trend_var, filter) {
         trendtab <- base::merge(trendtab, xvals, by.x = trend_var, by.y = 'value_text')
         setorder(trendtab, value_order)
       }
-      
+
       return(trendtab)
     })
     
