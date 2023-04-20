@@ -10,13 +10,12 @@ trends_plot_ui <- function(id) {
   
 }
 
-trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, visoption) {
+trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, visoption, valsvar) {
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
     
     output$plotui <- renderUI({
-      # go
       
       div(
         withSpinner(
@@ -26,7 +25,6 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, 
         ),
         style = 'margin-top: 1rem'
       )
-      
     })
     
     clean_table <- reactive({
@@ -77,8 +75,9 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, 
     })
     
     output$plot <- renderPlot({
+
       static_column_chart(t = clean_table(),
-                          x = isolate(trend_var()),
+                          x = valsvar(),
                           y = settings()$p,
                           moe = settings()$m,
                           est = settings()$e,
