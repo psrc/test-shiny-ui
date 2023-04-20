@@ -14,7 +14,7 @@ library(shinycssloaders)
 install_psrc_fonts()
 
 ## !special case!
-vars.subset <- fread('data/travel-vars.csv') # travel cat variables that have consistently named aliases for testing
+vars.subset <- fread('data/vars.csv') # cat variables that have consistently named aliases for testing
 
 source('modules/functions.R') # read functions file first
 

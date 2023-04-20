@@ -3,7 +3,7 @@
 
 trends_widgets_ui <- function(id) {
   ns <- NS(id)
-  cats <- c('Travel') # test only with Travel category
+  cats <- c('Travel', 'Worker', 'Reason for leaving previous residence') # test categories
   vars.cat <- vars.cat[which(vars.cat %in% cats)]
   
   tagList(
