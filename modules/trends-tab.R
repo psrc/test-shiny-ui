@@ -85,6 +85,7 @@ trends_tab_server <- function(id) {
                        trend_var = reactive(input$`trends-variable`),
                        alias = reactive(d()$alias),
                        geography = reactive(input$`trends-geography`),
+                       subgeography = reactive(input$`trends-subgeography`),
                        visoption = reactive(input$visopt),
                        valsvar = reactive(vals$var))
     

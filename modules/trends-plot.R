@@ -10,7 +10,7 @@ trends_plot_ui <- function(id) {
   
 }
 
-trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, visoption, valsvar) {
+trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, subgeography = NULL, visoption, valsvar) {
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -67,8 +67,20 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, 
                      "sample_count" = 'Sample count')
       
       title <- paste(desc, 'of', alias())
-      g <- ifelse(isolate(geography()) != 'Region', paste(isolate(geography()), 'County'), 'Regional')
 
+      x <- isolate(subgeography())
+      y <- isolate(geography())
+      
+      if(y %in% c('Region', 'Kitsap', 'Snohomish')) x <- NULL
+
+      if(is.null(x)) {
+        if(y == 'Region') g <- 'Regional'
+        if(y == 'Kitsap' | y == 'Snohomish') g <- paste(y, 'County')
+      } else {
+        if(y != 'Region' & (x != 'Region' && !is.null(x))) g <- paste(y, 'County:', x)
+        if(y != 'Region' & x == 'Region') g <- paste(y, 'County')
+      }
+      
       subtitle <- paste(g, 'results')
       
       return(list(title = title, subtitle = subtitle))
