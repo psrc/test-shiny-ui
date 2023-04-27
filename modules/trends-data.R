@@ -7,7 +7,7 @@ trends_data_ui <- function(id) {
   
 }
 
-trends_data_server <- function(id, go, trend_var, geography) {
+trends_data_server <- function(id, go, trend_var, geography, subgeography = NULL) {
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -57,11 +57,23 @@ trends_data_server <- function(id, go, trend_var, geography) {
       
       # collect data for available years
       survey_years <- varyears()
-      data <- map(survey_years, ~get_hhts(survey = .x, level = table_name, vars = c("sample_county", "seattle_home", trend_var)))
+      data <- map(survey_years, ~get_hhts(survey = .x, level = table_name, vars = c("sample_county", "final_home_jurisdiction", "seattle_home", trend_var)))
       walk(data, ~setDT(.x))
       
       # filter for home county when county is selected
       if(geography != 'Region') data <- map(data, ~.x[sample_county == geography,])
+      
+      if(geography %in% c('Region', 'Kitsap', 'Snohomish')) subgeography <- NULL
+      
+      if(!is.null(subgeography) & geography != 'Region') {
+        if(subgeography == 'Seattle') {
+          data <- map(data, ~.x[seattle_home == 'Home in Seattle',])
+        } else if(subgeography == 'Bellevue-Kirkland-Redmond') {
+          data <- map(data, ~.x[final_home_jurisdiction %in% c('Bellevue', 'Kirkland', 'Redmond'),])
+        } else if(subgeography == 'Tacoma') {
+          data <- map(data, ~.x[final_home_jurisdiction == 'Tacoma',])
+        }
+      }
         
       a <- alias()
       
@@ -70,6 +82,7 @@ trends_data_server <- function(id, go, trend_var, geography) {
         data <- map(data, ~.x[eval(parse(text = trend_var)) < max_float])
         data <- map(data, ~.x[, (trend_var) := cut(eval(parse(text = trend_var)), hist_breaks, labels = hist_breaks_labels, order_result = TRUE)])
       }
+      
       
       trendtab <- map(data, ~hhts_count(.x, group_vars = trend_var, incl_na = FALSE))
       new.colnames <- c("estimate", "estMOE", "share", "MOE", 'sample_count')

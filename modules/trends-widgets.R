@@ -16,6 +16,8 @@ trends_widgets_ui <- function(id) {
     selectInput(ns('geography'),
                 label = 'Geography',
                 choices = c('Region', 'King', 'Kitsap', 'Pierce', 'Snohomish')),
+    uiOutput(ns('subgeog')),
+    
     actionButton(ns('go'),
                  label = 'Enter')
   )
@@ -54,6 +56,20 @@ trends_widgets_server <- function(id) {
     variable_desc <- eventReactive(input$variable, {
       if(is.null(input$variable)) return(NULL)
       unique(variables.lu[variable == input$variable, .(detail)])
+    })
+    
+    output$subgeog <- renderUI({
+      if(input$geography == 'King') {
+        lg_juris <- c('All' = 'Region', 'City of Seattle' = 'Seattle', 'Bellevue-Kirkland-Redmond' = 'Bellevue-Kirkland-Redmond')
+      } else if(input$geography == 'Pierce') {
+        lg_juris <- c('All' = 'Region', 'Tacoma' = 'Tacoma')
+      } else {
+        return(NULL)
+      }
+      
+      selectInput(ns('subgeography'),
+                  label = 'Large Jurisdictions',
+                  choices = lg_juris)
     })
     
     

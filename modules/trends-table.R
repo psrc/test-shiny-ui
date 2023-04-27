@@ -9,7 +9,7 @@ trends_table_ui <- function(id) {
   
 }
 
-trends_table_server <- function(id, go, trendtable, alias, geography) {
+trends_table_server <- function(id, go, trendtable, alias, geography, subgeography = NULL) {
  
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -61,7 +61,17 @@ trends_table_server <- function(id, go, trendtable, alias, geography) {
     })
     
     description <- reactive({
-      ifelse(geography != 'Region', g <- paste(geography, 'County Results'), g <- 'Regional Results')
+      if(geography %in% c('Region', 'Kitsap', 'Snohomish')) subgeography <- NULL
+      
+      if(is.null(subgeography)) {
+        if(geography == 'Region') g <- 'Regional Results'
+        if(geography == 'Kitsap' | geography == 'Snohomish') g <- paste(geography, 'County Results')
+      } else {
+        if(geography != 'Region' & (subgeography != 'Region' && !is.null(subgeography))) g <- paste(geography, 'County:', subgeography, 'Results')
+        if(geography != 'Region' & subgeography == 'Region') g <- paste(geography, 'County Results')
+      }
+
+      return(g)
     })
     
     output$table <- renderDT({
@@ -73,7 +83,7 @@ trends_table_server <- function(id, go, trendtable, alias, geography) {
       
       fmt.per <- names(dtype.choice[dtype.choice %in% c('share')])
       fmt.num <- names(dtype.choice[dtype.choice %in% c('estimate', 'sample_count')])
-      
+
       DT::datatable(dt,
                     caption = description(),
                     options = list(autoWidth = FALSE,
