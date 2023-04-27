@@ -64,7 +64,8 @@ trends_tab_server <- function(id) {
       trends_data_server('trendsData', 
                          go = input$`trends-go`, 
                          trend_var = input$`trends-variable`,
-                         geography = input$`trends-geography`
+                         geography = input$`trends-geography`,
+                         subgeography = input$`trends-subgeography`
                          )
     })
     
@@ -73,7 +74,8 @@ trends_tab_server <- function(id) {
                           go = input$`trends-go`, 
                           trendtable = d()$table, 
                           alias = d()$alias, 
-                          geography = input$`trends-geography`
+                          geography = input$`trends-geography`,
+                          subgeography = input$`trends-subgeography`
                           )
     })
     
