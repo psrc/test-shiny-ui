@@ -43,8 +43,6 @@ col.headers <- c("sample_count", "estimate", "estMOE", "share", "MOE")
 dtype.choice.xtab.facts <- dtype.choice[c(9, 8, 7)]
 col.headers.facts <-  c("median", "MOE", "sample_count")
 
-# we assume a 50% probability to maximize the MOE
-p_MOE <- 0.5
 
 # stab sublist
 # change to named indices

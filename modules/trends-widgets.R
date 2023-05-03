@@ -28,11 +28,11 @@ trends_widgets_server <- function(id) {
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
-    
     variables <- reactive({
       # variable and alias list
       # vars.subset is read in global.R
       t <- variables.lu[category %in% input$category, ][variable %in% vars.subset$variable]
+      t<-t%>%filter(survey_year==max(t$survey_year))
       v.raw <- as.list(unique(t$variable))
       v.list <- setNames(v.raw, as.list(unique(t$variable_name)))
     })
