@@ -15,6 +15,7 @@ install_psrc_fonts()
 
 ## !special case!
 vars.subset <- fread('data/vars.csv') # cat variables that have consistently named aliases for testing
+current.vars.subset <- fread('data/summary_out.csv')
 
 source('modules/functions.R') # read functions file first
 

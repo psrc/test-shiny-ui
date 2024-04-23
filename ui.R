@@ -26,7 +26,7 @@ navbarPage(
  
   tabPanel(title = "Trends", trends_tab_ui('trendsTab')),
   
-  tabPanel(title = "Current Demographic Travel", dummy_tab_ui('dummy')),
+  tabPanel(title = "Current Demographic Travel", current_tab_ui('current')),
   
   tags$footer(footer_ui('myFooter'))
   
