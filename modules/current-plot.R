@@ -47,9 +47,16 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two) {
       
       # static_bar_chart(mode_income_summary, y='mode_simple', x='prop', fill='hhincome_broad', color='pgnobgy_10')
 
-      static_bar_chart(t = clean_table(),
-                       x = 'prop',
-                       y = var_one,
+      # static_bar_chart(t = clean_table(),
+      #                  x = 'prop',
+      #                  y = var_one,
+      #                  fill = var_two,
+      #                  color = 'pgnobgy_10',
+      #                  source = 'Puget Sound Regional Household Travel Survey')
+      
+      static_column_chart(t = clean_table(),
+                       y = 'prop',
+                       x = var_one,
                        fill = var_two,
                        color = 'pgnobgy_10',
                        source = 'Puget Sound Regional Household Travel Survey')

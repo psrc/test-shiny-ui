@@ -10,7 +10,7 @@ current_widgets_ui <- function(id) {
 
   tagList(
     
-    div(style = "background-color: grey; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
+    div(style = "background-color: #BCBEC0; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
         
         # Variable One
         selectInput(ns('cat_one'),
@@ -19,7 +19,7 @@ current_widgets_ui <- function(id) {
         uiOutput(ns('var_one_ui')),
     ),
     
-    div(style = "background-color: pink; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
+    div(style = "background-color: #BCBEC0; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
         # Variable Two
         selectInput(ns('cat_two'),
                     label = 'Category Two',
