@@ -15,6 +15,14 @@ current_tab_ui <- function(id) {
                 
                  current_widgets_ui(ns('current')),
                  
+                 # if visual tab is clicked, display radio button selection (share, share moe, count, count moe, etc.)
+                 conditionalPanel(paste0("input['", ns("tabset"), "'] == 'v'"),
+                                  div(style = 'margin: 3rem 0',
+                                      radioButtons(ns('visopt'),
+                                                   label = 'Visual Options',
+                                                   choices = dtype.choice.stab.vis
+                                      )))
+                 
                  
           ), # end column
           column(width = 9,
@@ -66,11 +74,12 @@ current_tab_server <- function(id) {
     })
     
     current_plot_server(id = 'plot', 
-                         go = input$`current-go`, 
-                         crosstab_table = reactive(d()),
-                         var_one = 'var_1_value',
-                         var_two = 'var_2_value'
-                      )
+                        go = input$`current-go`, 
+                        crosstab_table = reactive(d()),
+                        var_one = 'var_1_value',
+                        var_two = 'var_2_value',
+                        visoption = reactive(input$visopt)
+    )
     
   }) # end moduleServer
   
