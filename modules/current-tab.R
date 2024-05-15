@@ -57,7 +57,7 @@ current_tab_server <- function(id) {
     ns <- session$ns
     
     vals <- reactiveValues(var1 = NULL, var2 = NULL)
-    
+
     observeEvent(input$`current-go`, {
       vals$var1 <- input$`current-var_one`
       vals$var2 <- input$`current-var_two`
@@ -67,17 +67,18 @@ current_tab_server <- function(id) {
     
     d <- eventReactive(input$`current-go`, {
       # query table that match var 1 and var 2 
-
+      
       current.vars.subset %>% 
-        filter(var_1_name == input$`current-var_one` & var_2_name == input$`current-var_two`)
+        filter(var1 == input$`current-var_one` & var2 == input$`current-var_two`) |> 
+        filter(geography == input$`current-geog`)
 
     })
     
     current_plot_server(id = 'plot', 
                         go = input$`current-go`, 
                         crosstab_table = reactive(d()),
-                        var_one = 'var_1_value',
-                        var_two = 'var_2_value',
+                        var_one = 'val1',
+                        var_two = 'val2',
                         visoption = reactive(input$visopt)
     )
     

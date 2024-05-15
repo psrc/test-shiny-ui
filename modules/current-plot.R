@@ -29,7 +29,7 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
     })
     
     clean_table <- reactive({
-      
+
       crosstab_table() %>% 
         rename('share' = 'prop',  'estimate' = 'est', 'sample_count' = 'count')
       
@@ -67,7 +67,7 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
     })
     
     output$plot <- renderPlot({
-      
+
       # static_bar_chart(mode_income_summary, y='mode_simple', x='prop', fill='hhincome_broad', color='pgnobgy_10')
 
       # static_bar_chart(t = clean_table(),

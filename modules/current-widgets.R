@@ -8,6 +8,8 @@ current_widgets_ui <- function(id) {
     select(category_1, category_2) %>% 
     distinct()
 
+  geogs <- current.vars.subset$geography |> unique()
+
   tagList(
     
     div(style = "background-color: #BCBEC0; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
@@ -27,6 +29,10 @@ current_widgets_ui <- function(id) {
         uiOutput(ns('var_two_ui')),
     ),
     
+    selectInput(ns('geog'),
+                label = 'Geography',
+                choices = geogs),
+    
     actionButton(ns('go'),
                  label = 'Enter')
   )
@@ -41,16 +47,15 @@ current_widgets_server <- function(id) {
     variables <- reactive({
       # variable and alias list for both dropdowns
       # current.vars.subset is read in global.R
-      t <- current.vars.subset %>% 
-        filter(var_1_nice_name != 'Survey data collection year')
+      t <- current.vars.subset
       
-      v_one <- t %>% filter(category_1 == input$cat_one) %>% select(var_1_name, var_1_nice_name) %>% distinct()
-      vars_one <- as.vector(v_one$var_1_name)
-      names(vars_one) <- as.vector(v_one$var_1_nice_name)
+      v_one <- t %>% filter(category_1 == input$cat_one) %>% select(var1) %>% distinct()
+      vars_one <- as.vector(v_one$var1)
+      names(vars_one) <- as.vector(v_one$var1)
       
-      v_two <- t %>% filter(category_2 == input$cat_two) %>% select(var_2_name, var_2_nice_name) %>% distinct()
-      vars_two <- as.vector(v_two$var_2_name)
-      names(vars_two) <- as.vector(v_two$var_2_nice_name)
+      v_two <- t %>% filter(category_2 == input$cat_two) %>% select(var2) %>% distinct()
+      vars_two <- as.vector(v_two$var2)
+      names(vars_two) <- as.vector(v_two$var2)
       
       return(list(one = vars_one, two = vars_two))
       
