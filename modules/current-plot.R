@@ -30,9 +30,8 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
     
     clean_table <- reactive({
 
-      crosstab_table() %>% 
-        rename('share' = 'prop',  'estimate' = 'est', 'sample_count' = 'count')
-      
+      crosstab_table()
+
     })
     
     settings <- reactive({
@@ -40,22 +39,22 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
       primary_col <- switch(visoption(),
                             'share' = 'share',
                             'estimate' = 'estimate',
-                            "share_with_MOE" = 'share',
-                            "estimate_with_MOE" = 'estimate',
+                            "share_moe" = 'share',
+                            "estimate_moe" = 'estimate',
                             "sample_count" = 'sample_count')
       
       moe_col <- switch(visoption(),
                         'share' = NULL,
                         'estimate' = NULL,
-                        "share_with_MOE" = 'MOE',
-                        "estimate_with_MOE" = 'estMOE',
+                        "share_moe" = 'share_moe', 
+                        "estimate_moe" = 'estimate_moe',
                         "sample_count" = NULL)
       
       est <- switch(visoption(),
                     'share' = 'percent',
                     'estimate' = 'number',
-                    "share_with_MOE" = 'percent',
-                    "estimate_with_MOE" = 'number',
+                    "share_moe" = 'percent',
+                    "estimate_moe" = 'number',
                     "sample_count" = 'number')
       
       return(list(p = primary_col, m = moe_col, e = est))
@@ -68,15 +67,6 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
     
     output$plot <- renderPlot({
 
-      # static_bar_chart(mode_income_summary, y='mode_simple', x='prop', fill='hhincome_broad', color='pgnobgy_10')
-
-      # static_bar_chart(t = clean_table(),
-      #                  x = 'prop',
-      #                  y = var_one,
-      #                  fill = var_two,
-      #                  color = 'pgnobgy_10',
-      #                  source = 'Puget Sound Regional Household Travel Survey')
-      # browser()
       static_column_chart(t = clean_table(),
                           x = var_one,
                           y = settings()$p,
@@ -85,16 +75,6 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
                           fill = var_two,
                           color = 'pgnobgy_10',
                           source = 'Puget Sound Regional Household Travel Survey')
-      
-      # static_column_chart(t = clean_table(),
-      #                     x = valsvar(),
-      #                     y = settings()$p,
-      #                     moe = settings()$m,
-      #                     est = settings()$e,
-      #                     fill = 'survey',
-      #                     title = text()$title,
-      #                     subtitle = text()$subtitle,
-      #                     source = 'Puget Sound Regional Household Travel Survey')
     })
     
     

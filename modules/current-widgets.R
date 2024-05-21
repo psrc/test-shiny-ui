@@ -48,14 +48,12 @@ current_widgets_server <- function(id) {
       # variable and alias list for both dropdowns
       # current.vars.subset is read in global.R
       t <- current.vars.subset
+
+      v_one <- t %>% filter(category_1 == input$cat_one) %>% select(label1, var1) %>% distinct()
+      vars_one <- deframe(v_one)
       
-      v_one <- t %>% filter(category_1 == input$cat_one) %>% select(var1) %>% distinct()
-      vars_one <- as.vector(v_one$var1)
-      names(vars_one) <- as.vector(v_one$var1)
-      
-      v_two <- t %>% filter(category_2 == input$cat_two) %>% select(var2) %>% distinct()
-      vars_two <- as.vector(v_two$var2)
-      names(vars_two) <- as.vector(v_two$var2)
+      v_two <- t %>% filter(category_2 == input$cat_two) %>% select(label2, var2) %>% distinct()
+      vars_two <- deframe(v_two)
       
       return(list(one = vars_one, two = vars_two))
       
@@ -65,7 +63,8 @@ current_widgets_server <- function(id) {
       
       selectInput(ns('var_one'),
                   label = 'Variable One',
-                  choices = variables()$one)
+                  choices = variables()$one,
+                  selected = variables()$one[4])
       
     })
     
@@ -73,7 +72,8 @@ current_widgets_server <- function(id) {
       
       selectInput(ns('var_two'),
                   label = 'Variable Two',
-                  choices = variables()$two)
+                  choices = variables()$two,
+                  selected = variables()$two[2])
       
     })
     

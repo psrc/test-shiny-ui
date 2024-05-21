@@ -1,3 +1,34 @@
+# new code ----
+
+data_colnames <- c("share" = "prop",
+                   "share_moe" = "prop_moe",
+                   "estimate" = "est",
+                   "estimate_moe" = "est_moe",
+                   'sample_count' = 'count')
+
+# visual selection to data colname
+dtype_choice <- c("Share" ="share",
+                  "Total" = "estimate",
+                  
+                  "Margin of Error (Share)" = "share_moe", # DT
+                  "Margin of Error (Total)" = "estimate_moe", # DT
+                  
+                  "Share with Margin of Error" = "share_moe", # plot
+                  "Total with Margin of Error" = "estimate_moe", # plot
+                  
+                  "Sample Count" = "sample_count",
+                  
+                  "Median" = "median",
+                  "Median with Margin of Error" = "median_moe")
+
+# change to named indices
+dtype_choice_tbl <- dtype_choice[c(1:4, 7)]
+dtype_choice_vis <- dtype_choice[c(1:2, 5:7)]
+
+
+
+# legacy code ----
+
 hhts.datasets <- c('2017/2019','2021')
 
 missing_codes <- c('Missing: Technical Error', 'Missing: Non-response', 'Missing: Skip logic', 'Missing: Skip Logic', 'Children or missing')
