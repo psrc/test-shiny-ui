@@ -64,7 +64,7 @@ current_widgets_server <- function(id) {
       selectInput(ns('var_one'),
                   label = 'Variable One',
                   choices = variables()$one,
-                  selected = variables()$one[4])
+                  selected = "age")
       
     })
     

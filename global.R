@@ -10,6 +10,7 @@ library(tidyverse)
 library(DT)
 library(here)
 library(shinycssloaders)
+library(echarts4r)
 
 install_psrc_fonts()
 

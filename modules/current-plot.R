@@ -20,7 +20,8 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
       
       div(
         withSpinner(
-          plotOutput(ns('plot')),
+          echarts4rOutput(ns('plot'), width = "100%", height = "70rem"),
+          # plotOutput(ns('plot')),
           type = 5,
           color = psrc_colors$pgnobgy_10[sample.int(10, 1)]
         ),
@@ -65,16 +66,35 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
      
     })
     
-    output$plot <- renderPlot({
+    output$plot <- renderEcharts4r({
+    # output$plot <- renderPlot({
 
-      static_column_chart(t = clean_table(),
-                          x = var_one,
-                          y = settings()$p,
-                          moe = settings()$m,
-                          est = settings()$e,
-                          fill = var_two,
-                          color = 'pgnobgy_10',
-                          source = 'Puget Sound Regional Household Travel Survey')
+      # static_column_chart(t = clean_table(),
+      #                     x = var_one,
+      #                     y = settings()$p,
+      #                     moe = settings()$m,
+      #                     est = settings()$e,
+      #                     fill = var_two,
+      #                     color = 'pgnobgy_10',
+      #                     source = 'Puget Sound Regional Household Travel Survey')
+      
+      echart_bar_chart(
+        t = clean_table(),
+        x = var_one,
+        y = settings()$p,
+        est = settings()$e,
+        fill = var_two,
+        # moe = NULL,
+        pos = NULL,
+        column_vs_bar = "column",
+        color = psrc_colors$pgnobgy_10,
+        legend_str_wrap = 30,
+        x_label_str_wrap = 10,
+        egrid_left = "5%",
+        egrid_bottom = "20%",
+        x_label_rotate = 90
+      )
+      
     })
     
     
