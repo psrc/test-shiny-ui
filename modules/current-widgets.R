@@ -11,22 +11,28 @@ current_widgets_ui <- function(id) {
   geogs <- current.vars.subset$geography |> unique()
 
   tagList(
-    
-    div(style = "background-color: #BCBEC0; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
-        
-        # Variable One
-        selectInput(ns('cat_one'),
-                    label = 'Category One',
-                    choices = unique(vars.cat$category_1)), 
-        uiOutput(ns('var_one_ui')),
-    ),
-    
-    div(style = "background-color: #BCBEC0; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
-        # Variable Two
-        selectInput(ns('cat_two'),
-                    label = 'Category Two',
-                    choices = unique(vars.cat$category_2)), 
-        uiOutput(ns('var_two_ui')),
+    div(style = "background-color: #E6E6E6; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
+        fluidRow(
+          
+          column(width = 6,
+                 div(
+                   # Variable One
+                   selectInput(ns('cat_one'),
+                               label = 'Category One',
+                               choices = unique(vars.cat$category_1)),
+                   uiOutput(ns('var_one_ui')),
+                 )
+          ),
+          column(width = 6,
+                 div(
+                   # Variable Two
+                   selectInput(ns('cat_two'),
+                               label = 'Category Two',
+                               choices = unique(vars.cat$category_2)),
+                   uiOutput(ns('var_two_ui')),
+                 )
+          )
+        ) # end fluidrow
     ),
     
     selectInput(ns('geog'),

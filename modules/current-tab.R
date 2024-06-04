@@ -11,7 +11,7 @@ current_tab_ui <- function(id) {
     
     div(style = 'margin: 3rem 5rem;',
         fluidRow(
-          column(width = 3,
+          column(width = 4,
                  
                  current_widgets_ui(ns('current')),
                  
@@ -25,7 +25,7 @@ current_tab_ui <- function(id) {
                  
                  
           ), # end column
-          column(width = 9,
+          column(width = 8,
                  tabsetPanel(id = ns('tabset'),
                              type = 'pills',
                              tabPanel('Table',
