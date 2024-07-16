@@ -5,10 +5,8 @@ current_widgets_ui <- function(id) {
   ns <- NS(id)
   
   vars.cat <- current.vars.subset %>% 
-    select(category_1, category_2) %>% 
+    select(var_category, grouping_category) %>% 
     distinct()
-
-  geogs <- current.vars.subset$geography |> unique()
 
   tagList(
     div(style = "background-color: #E6E6E6; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
@@ -18,26 +16,20 @@ current_widgets_ui <- function(id) {
                  div(
                    # Variable One
                    selectInput(ns('cat_one'),
-                               label = 'Category One',
-                               choices = unique(vars.cat$category_1)),
-                   uiOutput(ns('var_one_ui')),
+                               label = 'Category',
+                               choices = unique(vars.cat$var_category)),
+                   uiOutput(ns('var_one_ui'))
                  )
           ),
           column(width = 6,
                  div(
                    # Variable Two
-                   selectInput(ns('cat_two'),
-                               label = 'Category Two',
-                               choices = unique(vars.cat$category_2)),
-                   uiOutput(ns('var_two_ui')),
+                   uiOutput(ns('cat_two_ui')),
+                   uiOutput(ns('var_two_ui'))
                  )
           )
         ) # end fluidrow
     ),
-    
-    selectInput(ns('geog'),
-                label = 'Geography',
-                choices = geogs),
     
     actionButton(ns('go'),
                  label = 'Enter')
@@ -50,38 +42,79 @@ current_widgets_server <- function(id) {
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
     
-    variables <- reactive({
-      # variable and alias list for both dropdowns
+    variable_one <- reactive({
+      # variable and alias list for primary variable
       # current.vars.subset is read in global.R
-      t <- current.vars.subset
-
-      v_one <- t %>% filter(category_1 == input$cat_one) %>% select(label1, var1) %>% distinct()
+      
+      # variable
+      v_one <- current.vars.subset |>  
+        filter(var_category == input$cat_one) |>  
+        select(var_nice_name, var_name) |>  
+        distinct()
+      
       vars_one <- deframe(v_one)
+    })
+    
+    category_vars_two <- reactive({
+
+      # grouping options
+      if(is.null(input$var_one)) return(NULL)
       
-      v_two <- t %>% filter(category_2 == input$cat_two) %>% select(label2, var2) %>% distinct()
-      vars_two <- deframe(v_two)
-      
-      return(list(one = vars_one, two = vars_two))
+      cat_two <- current.vars.subset |>  
+        filter(var_name == input$var_one) |>  
+        select(grouping_category, grouping_nice_name, grouping) |>  
+        distinct()
       
     })
- 
-    output$var_one_ui <- renderUI({
+    
+    category_two <- reactive({
       
-      selectInput(ns('var_one'),
-                  label = 'Variable One',
-                  choices = variables()$one,
-                  selected = "age")
+      if(is.null(input$var_one)) return(NULL)
       
+      cat_two <- category_vars_two() |> 
+        select(grouping_category) |> 
+        distinct() |> 
+        deframe()
+    })
+    
+    output$cat_two_ui <- renderUI({
+      
+      if(is.null(input$var_one)|is.null(category_two())) return(NULL)
+      
+      selectInput(ns('cat_two'),
+                  label = 'Grouping Category',
+                  choices = category_two())
+    })
+    
+    variables_two <- reactive({
+      
+      if(is.null(input$var_one)|is.null(input$cat_two)) return(NULL)
+      
+      vars_two <- category_vars_two() |> 
+        filter(grouping_category == input$cat_two) |> 
+        select(grouping_nice_name, grouping) |> 
+        distinct() |> 
+        deframe()
     })
     
     output$var_two_ui <- renderUI({
       
-      selectInput(ns('var_two'),
-                  label = 'Variable Two',
-                  choices = variables()$two,
-                  selected = variables()$two[2])
+      if(is.null(input$var_one)|is.null(variables_two())) return(NULL)
       
+      selectInput(ns('var_two'),
+                  label = 'Grouping Variable',
+                  choices = variables_two())
     })
+ 
+    output$var_one_ui <- renderUI({
+
+      selectInput(ns('var_one'),
+                  label = 'Variable',
+                  choices = variable_one())
+
+    })
+    
+   
     
   }) # end moduleServer
   

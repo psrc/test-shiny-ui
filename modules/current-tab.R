@@ -68,10 +68,10 @@ current_tab_server <- function(id) {
     d <- eventReactive(input$`current-go`, {
       # query table that match var 1 and var 2 
       # clean colnames
-      
-      current.vars.subset %>% 
-        filter(var1 == input$`current-var_one` & var2 == input$`current-var_two`) |> 
-        filter(geography == input$`current-geog`) |> 
+
+      current.vars.subset %>%
+        filter(var1 == input$`current-var_one` & var2 == input$`current-var_two`) |>
+        filter(geography == input$`current-geog`) |>
         rename(data_colnames)
       
     })
