@@ -14,7 +14,7 @@ current_widgets_ui <- function(id) {
           
           column(width = 6,
                  div(
-                   # Variable One
+                   # Variable (one)
                    selectInput(ns('cat_one'),
                                label = 'Category',
                                choices = unique(vars.cat$var_category)),
@@ -23,7 +23,7 @@ current_widgets_ui <- function(id) {
           ),
           column(width = 6,
                  div(
-                   # Variable Two
+                   # Grouping Variable (two)
                    uiOutput(ns('cat_two_ui')),
                    uiOutput(ns('var_two_ui'))
                  )
@@ -42,36 +42,45 @@ current_widgets_server <- function(id) {
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
     
+    ## category/variable and alias list for primary variable ----
     variable_one <- reactive({
-      # variable and alias list for primary variable
       # current.vars.subset is read in global.R
       
       # variable
       v_one <- current.vars.subset |>  
         filter(var_category == input$cat_one) |>  
         select(var_nice_name, var_name) |>  
-        distinct()
-      
-      vars_one <- deframe(v_one)
+        distinct() |> 
+        deframe()
     })
     
+    output$var_one_ui <- renderUI({
+      
+      selectInput(ns('var_one'),
+                  label = 'Variable',
+                  choices = variable_one())
+      
+    })
+    
+    ## category/variable and alias list for grouping variable ----
+    ### selection of primary variable influences choices for grouping category/variable
     category_vars_two <- reactive({
 
       # grouping options
       if(is.null(input$var_one)) return(NULL)
       
-      cat_two <- current.vars.subset |>  
+      current.vars.subset |>  
         filter(var_name == input$var_one) |>  
         select(grouping_category, grouping_nice_name, grouping) |>  
         distinct()
       
     })
     
-    category_two <- reactive({
+    categories_two <- reactive({
       
       if(is.null(input$var_one)) return(NULL)
       
-      cat_two <- category_vars_two() |> 
+      category_vars_two() |> 
         select(grouping_category) |> 
         distinct() |> 
         deframe()
@@ -79,18 +88,18 @@ current_widgets_server <- function(id) {
     
     output$cat_two_ui <- renderUI({
       
-      if(is.null(input$var_one)|is.null(category_two())) return(NULL)
+      if(is.null(input$var_one)|is.null(categories_two())) return(NULL)
       
       selectInput(ns('cat_two'),
                   label = 'Grouping Category',
-                  choices = category_two())
+                  choices = categories_two())
     })
     
     variables_two <- reactive({
       
       if(is.null(input$var_one)|is.null(input$cat_two)) return(NULL)
       
-      vars_two <- category_vars_two() |> 
+      category_vars_two() |> 
         filter(grouping_category == input$cat_two) |> 
         select(grouping_nice_name, grouping) |> 
         distinct() |> 
@@ -106,16 +115,7 @@ current_widgets_server <- function(id) {
                   choices = variables_two())
     })
  
-    output$var_one_ui <- renderUI({
-
-      selectInput(ns('var_one'),
-                  label = 'Variable',
-                  choices = variable_one())
-
-    })
-    
    
-    
   }) # end moduleServer
   
 }
