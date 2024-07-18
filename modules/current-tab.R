@@ -69,14 +69,12 @@ current_tab_server <- function(id) {
       # query table that match var 1 and var 2 
       # clean colnames. data_colnames in config.R
 
-      current.vars.subset |> 
-        filter(var_name == input$`current-var_one` & grouping == input$`current-var_two`) |> 
-        rename(data_colnames)
-      # current.vars.subset %>%
-      #   filter(var1 == input$`current-var_one` & var2 == input$`current-var_two`) |>
-      #   filter(geography == input$`current-geog`) |>
-      #   rename(data_colnames)
-      
+      setDT(current.vars.subset)
+      df <- current.vars.subset[var_name == input$`current-var_one` & grouping == input$`current-var_two`, ]
+      setorderv(df, c("var_label_order", "grouping_label_order"))
+      setnames(df, data_colnames, names(data_colnames)) 
+
+      return(df)
     })
     
     current_plot_server(id = 'plot', 
@@ -92,8 +90,6 @@ current_tab_server <- function(id) {
       current_table_server(id = 'table', 
                            go = input$`current-go`, 
                            current_table = d() # for tables, don't wrap with reactive(). I don't know why!
-                           # variable1 = input$`current-var_one`, 
-                           # variable2 = input$`current-var_two`
       )
       
     })

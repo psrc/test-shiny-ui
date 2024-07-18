@@ -34,7 +34,6 @@ current_table_server <- function(id, go, current_table) {
       
       cols <- c("var_nice_name", "grouping_nice_name", "year", "var_label", "grouping_label", "var_label_order", "grouping_label_order", dtype_choice_tbl)
 
-      setDT(current_table)
       dt <- current_table[, ..cols]
       
       col <- names(dtype_choice_tbl[dtype_choice_tbl %in% 'share_moe'])
@@ -50,7 +49,6 @@ current_table_server <- function(id, go, current_table) {
 
       # format survey year column, reorder rows
       setnames(dt, "year", "survey_year")
-      dt <- dt[order(survey_year, var_label_order, grouping_label_order)]
       
       return(dt)
     })

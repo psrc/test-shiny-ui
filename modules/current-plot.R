@@ -32,7 +32,6 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
     clean_table <- reactive({
 
       crosstab_table()
-
     })
     
     settings <- reactive({
