@@ -32,7 +32,9 @@ current_table_server <- function(id, go, current_table) {
     clean_table <- reactive({
       # clean Margin of Error columns and column/row reorder for DT
       
-      cols <- c("label1", "label2", "survey_year",  "geography", "val1", "val2", dtype_choice_tbl)
+      cols <- c("var_nice_name", "grouping_nice_name", "year", "var_label", "grouping_label", "var_label_order", "grouping_label_order", dtype_choice_tbl)
+
+      setDT(current_table)
       dt <- current_table[, ..cols]
       
       col <- names(dtype_choice_tbl[dtype_choice_tbl %in% 'share_moe'])
@@ -47,7 +49,8 @@ current_table_server <- function(id, go, current_table) {
       ][, estimate_moe := lapply(.SD, function(x) paste0("+/-", as.character(x))), .SDcols = 'estimate_moe']
 
       # format survey year column, reorder rows
-      dt <- dt[, survey_year := str_replace_all(survey_year, "_", "/")][order(survey_year)]
+      setnames(dt, "year", "survey_year")
+      dt <- dt[order(survey_year, var_label_order, grouping_label_order)]
       
       return(dt)
     })
@@ -73,14 +76,17 @@ current_table_server <- function(id, go, current_table) {
       dt <- clean_table()
 
       # colnames for DT
-      cols <- c("Year", "Geography", unique(dt$label1), unique(dt$label2), names(dtype_choice_tbl))
-      dt <- dt[, 3:ncol(dt)]
-      
+      cols <- c("var_nice_name", "grouping_nice_name", "Year", unique(dt$var_nice_name), unique(dt$grouping_nice_name) , names(dtype_choice_tbl))
+
+      # remove label orders
+      dt <- dt[, `:=` (var_label_order = NULL, grouping_label_order = NULL)]
+
       DT::datatable(dt,
                     # caption = description(),
                     colnames = cols,
                     options = list(autoWidth = FALSE,
-                                   columnDefs = list(list(className = "dt-center", width = '100px', targets = c(2:ncol(dt))))
+                                   columnDefs = list(list(className = "dt-center", width = '100px', targets = c(2:ncol(dt))),
+                                                     list(visible = FALSE, targets = c(1, 2, 3)))
                     )
       ) %>%
         formatPercentage('share', 1) %>%

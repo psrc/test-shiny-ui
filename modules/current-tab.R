@@ -67,25 +67,28 @@ current_tab_server <- function(id) {
     
     d <- eventReactive(input$`current-go`, {
       # query table that match var 1 and var 2 
-      # clean colnames
+      # clean colnames. data_colnames in config.R
 
-      current.vars.subset %>%
-        filter(var1 == input$`current-var_one` & var2 == input$`current-var_two`) |>
-        filter(geography == input$`current-geog`) |>
+      current.vars.subset |> 
+        filter(var_name == input$`current-var_one` & grouping == input$`current-var_two`) |> 
         rename(data_colnames)
+      # current.vars.subset %>%
+      #   filter(var1 == input$`current-var_one` & var2 == input$`current-var_two`) |>
+      #   filter(geography == input$`current-geog`) |>
+      #   rename(data_colnames)
       
     })
     
     current_plot_server(id = 'plot', 
                         go = input$`current-go`, 
                         crosstab_table = reactive(d()),
-                        var_one = 'val1',
-                        var_two = 'val2',
+                        var_one = 'var_label',
+                        var_two = 'grouping_label',
                         visoption = reactive(input$visopt)
     )
     
     observeEvent(input$`current-go`, {
-      
+
       current_table_server(id = 'table', 
                            go = input$`current-go`, 
                            current_table = d() # for tables, don't wrap with reactive(). I don't know why!
