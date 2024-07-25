@@ -7,27 +7,32 @@ current_widgets_ui <- function(id) {
   vars.cat <- current.vars.subset %>% 
     select(var_category, grouping_category) %>% 
     distinct()
-
+  
   tagList(
     div(style = "background-color: #E6E6E6; padding: 2rem; margin-bottom: .75rem; border-radius: 10px;",
-        fluidRow(
-          
-          column(width = 6,
+        fluidRow(style = "display: flex; justify-content: center;",
+                 
                  div(
+                   style = "width: 40%; margin: 0 1rem;",
                    # Variable (one)
                    selectInput(ns('cat_one'),
                                label = 'Category',
                                choices = unique(vars.cat$var_category)),
                    uiOutput(ns('var_one_ui'))
+                 ),
+                 
+                 div(style = "width: 20%; align-self: center;",
+                     actionButton(ns("swap-button"),
+                                  label = tags$i(class = "fa-solid fa-right-left", 
+                                                 style="padding: 0px; font-size: 15px;")
+                     )
+                     
+                 ), 
+                 div(style = "width: 40%; margin: 0 1rem;",
+                     # Grouping Variable (two)
+                     uiOutput(ns('cat_two_ui')),
+                     uiOutput(ns('var_two_ui'))
                  )
-          ),
-          column(width = 6,
-                 div(
-                   # Grouping Variable (two)
-                   uiOutput(ns('cat_two_ui')),
-                   uiOutput(ns('var_two_ui'))
-                 )
-          )
         ) # end fluidrow
     ),
     
@@ -65,7 +70,7 @@ current_widgets_server <- function(id) {
     ## category/variable and alias list for grouping variable ----
     ### selection of primary variable influences choices for grouping category/variable
     category_vars_two <- reactive({
-
+      
       # grouping options
       if(is.null(input$var_one)) return(NULL)
       
@@ -114,8 +119,8 @@ current_widgets_server <- function(id) {
                   label = 'Grouping Variable',
                   choices = variables_two())
     })
- 
-   
+    
+    
   }) # end moduleServer
   
 }

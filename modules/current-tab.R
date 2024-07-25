@@ -9,9 +9,9 @@ current_tab_ui <- function(id) {
               banner_title = "Current Demographic Travel", 
               banner_subtitle = "Cross-tabulate 2023 Survey Results"),
     
-    div(style = 'margin: 3rem 5rem;',
+    div(style = 'margin: 3rem 1rem;',
         fluidRow(
-          column(width = 4,
+          column(width = 4,#4
                  
                  current_widgets_ui(ns('current')),
                  
@@ -25,7 +25,7 @@ current_tab_ui <- function(id) {
                  
                  
           ), # end column
-          column(width = 8,
+          column(width = 8,#8
                  tabsetPanel(id = ns('tabset'),
                              type = 'pills',
                              tabPanel('Table',
