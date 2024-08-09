@@ -10,7 +10,7 @@ trends_plot_ui <- function(id) {
   
 }
 
-trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, subgeography = NULL, visoption, valsvar) {
+trends_plot_server <- function(id, go, trendtable, trend_var, visoption) {#, valsvar
   
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -19,7 +19,7 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, 
       
       div(
         withSpinner(
-          plotOutput(ns('plot')),
+          echarts4rOutput(ns('plot'), width = "100%", height = "50rem"),
           type = 5,
           color = psrc_colors$pgnobgy_10[sample.int(10, 1)]
         ),
@@ -28,8 +28,7 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, 
     })
     
     clean_table <- reactive({
-      
-      trendtable()[, survey := str_replace_all(survey, '_', '/')]
+      trendtable()
     })
     
     settings <- reactive({
@@ -37,66 +36,59 @@ trends_plot_server <- function(id, go, trendtable, trend_var, alias, geography, 
       primary_col <- switch(visoption(),
                             'share' = 'share',
                             'estimate' = 'estimate',
-                            "share_with_MOE" = 'share',
-                            "estimate_with_MOE" = 'estimate',
+                            "share_moe" = 'share',
+                            "estimate_moe" = 'estimate',
                             "sample_count" = 'sample_count')
-
+      
       moe_col <- switch(visoption(),
                         'share' = NULL,
                         'estimate' = NULL,
-                        "share_with_MOE" = 'MOE',
-                        "estimate_with_MOE" = 'estMOE',
+                        "share_moe" = 'share_moe', 
+                        "estimate_moe" = 'estimate_moe',
                         "sample_count" = NULL)
-
+      
       est <- switch(visoption(),
                     'share' = 'percent',
                     'estimate' = 'number',
-                    "share_with_MOE" = 'percent',
-                    "estimate_with_MOE" = 'number',
+                    "share_moe" = 'percent',
+                    "estimate_moe" = 'number',
                     "sample_count" = 'number')
       
       return(list(p = primary_col, m = moe_col, e = est))
     })
     
-    text <- reactive({
-      desc <- switch(visoption(),
-                     'share' = 'Share',
-                     'estimate' = 'Estimate',
-                     "share_with_MOE" = 'Share',
-                     "estimate_with_MOE" = 'Estimate',
-                     "sample_count" = 'Sample count')
-      
-      title <- paste(desc, 'of', alias())
+    output$plot <- renderEcharts4r({
+      # analyze unique # of x var_labels
+      df <- clean_table()
 
-      x <- isolate(subgeography())
-      y <- isolate(geography())
-      
-      if(y %in% c('Region', 'Kitsap', 'Snohomish')) x <- NULL
+      # adjust labels and rotation
+      num_x_labels <- length(unique(df[["var_label"]]))
 
-      if(is.null(x)) {
-        if(y == 'Region') g <- 'Regional'
-        if(y == 'Kitsap' | y == 'Snohomish') g <- paste(y, 'County')
+      if(num_x_labels <= 2) {
+        setting_x_label_str_wrap <- NULL
+        setting_x_label_rotate <- 0
       } else {
-        if(y != 'Region' & (x != 'Region' && !is.null(x))) g <- paste(y, 'County:', x)
-        if(y != 'Region' & x == 'Region') g <- paste(y, 'County')
+        setting_x_label_str_wrap <- 10
+        setting_x_label_rotate <- 90
       }
-      
-      subtitle <- paste(g, 'results')
-      
-      return(list(title = title, subtitle = subtitle))
-    })
-    
-    output$plot <- renderPlot({
 
-      static_column_chart(t = clean_table(),
-                          x = valsvar(),
-                          y = settings()$p,
-                          moe = settings()$m,
-                          est = settings()$e,
-                          fill = 'survey',
-                          title = text()$title,
-                          subtitle = text()$subtitle,
-                          source = 'Puget Sound Regional Household Travel Survey')
+      echart_bar_chart(
+        t = df,
+        x = "var_label",
+        y = settings()$p,
+        est = settings()$e,
+        fill = "year",
+        moe = settings()$m,
+        pos = NULL,
+        column_vs_bar = "column",
+        color = psrc_colors$pgnobgy_10,
+        legend_str_wrap = 30,
+        x_label_str_wrap = setting_x_label_str_wrap,
+        egrid_left = "10%",
+        egrid_bottom = "20%",
+        x_label_rotate = setting_x_label_rotate
+      )
+      
     })
     
     

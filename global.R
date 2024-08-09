@@ -18,12 +18,17 @@ install_psrc_fonts()
 selected_year <- 2023
 
 ## !special case!
-vars.subset <- fread('data/vars.csv') # cat variables that have consistently named aliases for testing
-# current.vars.subset <- fread('data/crosstab_df.csv')
-current.vars.subset <- read.xlsx('data/all_summary_tbls.xlsx')
+# vars.subset <- fread('data/vars.csv') # cat variables that have consistently named aliases for testing
 
-current.vars.subset <- current.vars.subset |> 
-  filter(year == selected_year & !is.na(grouping))
+main_data <- read.xlsx('data/all_summary_tbls.xlsx')
+setDT(main_data)
+
+# crosstab data
+current.vars.subset <- main_data[year == selected_year & !is.na(grouping), ]
+
+# trends data
+trends_vars_subset <- main_data[is.na(grouping), ][, .SD, .SDcols = ! names(main_data) %like% "grouping"]
+
 
 source('modules/functions.R') # read functions file first
 

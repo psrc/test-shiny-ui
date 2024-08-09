@@ -24,7 +24,7 @@ navbarPage(
   
   # tabs ----
  
-  # tabPanel(title = "Trends", trends_tab_ui('trendsTab')),
+  tabPanel(title = "Trends", trends_tab_ui('trends')),
   
   tabPanel(title = "Current Demographic Travel", current_tab_ui('current')),
   

@@ -20,7 +20,7 @@ current_tab_ui <- function(id) {
                                   div(style = 'margin: 3rem 0',
                                       radioButtons(ns('visopt'),
                                                    label = 'Visual Options',
-                                                   choices = dtype_choice_vis #dtype.choice.stab.vis
+                                                   choices = dtype_choice_vis
                                       )))
                  
                  

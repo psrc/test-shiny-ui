@@ -12,14 +12,14 @@ trends_tab_ui <- function(id) {
     div(style = 'margin: 3rem 5rem;',
         fluidRow(
           column(width = 3,
-                 trends_widgets_ui(ns('trends')),
+                 trends_widgets_ui(ns('trendsWidgets')),
                  
                  # if visual tab is clicked, display radio button selection (share, share moe, count, count moe, etc.)
                  conditionalPanel(paste0("input['", ns("tabset"), "'] == 'v'"),
                                   div(style = 'margin: 3rem 0',
                                       radioButtons(ns('visopt'),
                                                    label = 'Visual Options',
-                                                   choices = dtype.choice.stab.vis
+                                                   choices = dtype_choice_vis
                                       ))
                  )
                  
@@ -52,42 +52,34 @@ trends_tab_server <- function(id) {
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
     
-    vals <- reactiveValues(var = NULL)
+    # vals <- reactiveValues(var = NULL)
+    # 
+    # observeEvent(input$`trends-go`, {
+    #   vals$var <- input$`trends-variable`
+    # })
     
-    observeEvent(input$`trends-go`, {
-      vals$var <- input$`trends-variable`
-    })
+    trends_widgets_server('trendsWidgets')
     
-    trends_widgets_server('trends')
-    
-    d <- eventReactive(input$`trends-go`, {
-      trends_data_server('trendsData', 
-                         go = input$`trends-go`, 
-                         trend_var = input$`trends-variable`,
-                         geography = input$`trends-geography`,
-                         subgeography = input$`trends-subgeography`
+    d <- eventReactive(input$`trendsWidgets-go`, {
+      trends_data_server('trendsData',
+                         trend_var = input$`trendsWidgets-variable`
                          )
     })
     
-    observeEvent(input$`trends-go`, {
+    observeEvent(input$`trendsWidgets-go`, {
       trends_table_server('table', 
-                          go = input$`trends-go`, 
-                          trendtable = d()$table, 
-                          alias = d()$alias, 
-                          geography = input$`trends-geography`,
-                          subgeography = input$`trends-subgeography`
-                          )
+                          go = input$`trendsWidgets-go`, 
+                          trendtable = d()$table
+      )
     })
     
     trends_plot_server('plot',
-                       go = input$`trends-go`,
-                       trendtable= reactive(d()$tablevis),
-                       trend_var = reactive(input$`trends-variable`),
-                       alias = reactive(d()$alias),
-                       geography = reactive(input$`trends-geography`),
-                       subgeography = reactive(input$`trends-subgeography`),
-                       visoption = reactive(input$visopt),
-                       valsvar = reactive(vals$var))
+                       go = input$`trendsWidgets-go`,
+                       trendtable = reactive(d()$table), 
+                       trend_var = reactive(input$`trendsWidgets-variable`), 
+                       visoption = reactive(input$visopt)
+                       )
+                          
     
   }) # end moduleServer
   

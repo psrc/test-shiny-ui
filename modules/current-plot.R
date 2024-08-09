@@ -69,7 +69,7 @@ current_plot_server <- function(id, go, crosstab_table, var_one, var_two, visopt
     output$plot <- renderEcharts4r({
       # analyze unique # of x var_labels
       df <- clean_table()
-      
+
       # adjust labels and rotation
       num_x_labels <- length(unique(df[[var_one]]))
       

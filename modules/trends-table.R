@@ -9,7 +9,7 @@ trends_table_ui <- function(id) {
   
 }
 
-trends_table_server <- function(id, go, trendtable, alias, geography, subgeography = NULL) {
+trends_table_server <- function(id, go, trendtable) {
  
   moduleServer(id, function(input, output, session) { 
     ns <- session$ns
@@ -31,47 +31,26 @@ trends_table_server <- function(id, go, trendtable, alias, geography, subgeograp
     clean_table <- reactive({
       # clean Margin of Error columns and column/row reorder for DT
       
-      dt <- trendtable
-      
-      col <- names(dtype.choice[dtype.choice %in% "MOE"])
-      col2 <- names(dtype.choice[dtype.choice %in% "estMOE"])
+      cols <- c("var_nice_name", "year", "var_label", "var_label_order", dtype_choice_tbl)
 
+      dt <- trendtable[, ..cols]
+      
+      col <- names(dtype_choice_tbl[dtype_choice_tbl %in% 'share_moe'])
+      col2 <- names(dtype_choice_tbl[dtype_choice_tbl %in% 'estimate_moe'])
+      
       # round columns
-      dt[, (col) := lapply(.SD, function(x) round(x*100, 1)), .SDcols = col
-      ][, (col2) := lapply(.SD, function(x) prettyNum(round(x, 0), big.mark = ",", preserve.width = "none")), .SDcols = col2]
+      dt[, share_moe := lapply(.SD, function(x) round(x*100, 1)), .SDcols = 'share_moe'
+      ][, estimate_moe := lapply(.SD, function(x) prettyNum(round(x, 0), big.mark = ",", preserve.width = "none")), .SDcols = 'estimate_moe']
       
       # add symbols
-      dt[, (col) := lapply(.SD, function(x) paste0("+/-", as.character(x), "%")), .SDcols = col
-      ][, (col2) := lapply(.SD, function(x) paste0("+/-", as.character(x))), .SDcols = col2]
+      dt[, share_moe := lapply(.SD, function(x) paste0("+/-", as.character(x), "%")), .SDcols = 'share_moe'
+      ][, estimate_moe := lapply(.SD, function(x) paste0("+/-", as.character(x))), .SDcols = 'estimate_moe']
       
       # format survey year column, reorder rows
-      dt[, Survey := str_replace_all(Survey, "_", "/")]
-      dt <- dt[order(Survey)]
+      setnames(dt, "year", "survey_year")
       
-      new.colorder <- c('Survey',
-                        alias,
-                        names(dtype.choice[dtype.choice %in% c("share")]),
-                        col,
-                        names(dtype.choice[dtype.choice %in% c("estimate")]),
-                        col2,
-                        names(dtype.choice[dtype.choice %in% c("sample_count")]))
-      
-      setcolorder(dt,  new.colorder)
       return(dt)
-    })
-    
-    description <- reactive({
-      if(geography %in% c('Region', 'Kitsap', 'Snohomish')) subgeography <- NULL
-      
-      if(is.null(subgeography)) {
-        if(geography == 'Region') g <- 'Regional Results'
-        if(geography == 'Kitsap' | geography == 'Snohomish') g <- paste(geography, 'County Results')
-      } else {
-        if(geography != 'Region' & (subgeography != 'Region' && !is.null(subgeography))) g <- paste(geography, 'County:', subgeography, 'Results')
-        if(geography != 'Region' & subgeography == 'Region') g <- paste(geography, 'County Results')
-      }
 
-      return(g)
     })
     
     output$table <- renderDT({
@@ -84,15 +63,24 @@ trends_table_server <- function(id, go, trendtable, alias, geography, subgeograp
       fmt.per <- names(dtype.choice[dtype.choice %in% c('share')])
       fmt.num <- names(dtype.choice[dtype.choice %in% c('estimate', 'sample_count')])
 
-      DT::datatable(dt,
-                    caption = description(),
-                    options = list(autoWidth = FALSE,
-                                   columnDefs = list(list(className = "dt-center", width = '100px', targets = c(2:ncol(dt))))
-                    )
+      # colnames for DT
+      cols <- c("var_nice_name", "Year", unique(dt$var_nice_name), names(dtype_choice_tbl))
+      
+      # order by label order, survey_year
+      setorderv(dt, c("var_label_order", "survey_year"))
+      dt <- dt[, `:=` (var_label_order = NULL)]
+      
+      datatable(dt,
+                # caption = description(),
+                colnames = cols,
+                options = list(autoWidth = FALSE,
+                               columnDefs = list(list(className = "dt-center", width = '100px', targets = c(2:ncol(dt))),
+                                                 list(visible = FALSE, targets = c(1)))
+                )
       ) %>%
-        formatPercentage(fmt.per, 1) %>%
-        formatRound(fmt.num, 0) %>%
-        formatStyle(columns = 2:ncol(dt),
+        formatPercentage('share', 1) %>%
+        formatRound(c('estimate', 'sample_count'), 0) %>%
+        formatStyle(columns = 1:ncol(dt),
                     valueColumns = ncol(dt),
                     color = styleInterval(c(30), c(colors$ltgrey, colors$dkgrey)))
     })
